@@ -1,0 +1,6 @@
+parameters:
+  router.request_context.scheme: http
+  router.request_context.host: api.masterhome.local
+  router.request_context.base_url: '%router.request_context.scheme%://%router.request_context.host%/'
+  ws_url: 'http://172.22.0.1:3335'
+  ws_auth_token: 'Bearer SmF6Ry5YeXhYZzFnMmJuegHE78ztEMiFIYsBYvN6qXtD90pI0Z7XegFeyoQSwlkoA'

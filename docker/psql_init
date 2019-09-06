@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+. $(dirname $0)/script/functions.sh
+
+if [[ -z "$@" ]]; then
+    pg -u postgres psql -h masterhome -U postgres -f /docker-entrypoint-initdb.d/create_db.sql
+    exit 0
+fi
+
+pg psql "$@"

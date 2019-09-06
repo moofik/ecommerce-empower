@@ -1,0 +1,151 @@
+version: '3'
+
+services:
+  masterhome-nginx:
+    build: build/nginx
+    image: masterhome/nginx
+    volumes:
+     - "./volumes/nginx/log/:/var/log/nginx/"
+     - "./build/nginx/masterhome.local.conf:/etc/nginx/conf.d/default.conf:ro"
+     - "..:/masterhome:ro"
+    ports:
+     - "127.0.0.1:80:80"
+    networks:
+     - master_home
+    depends_on:
+     - masterhome-php-fpm
+
+  masterhome-php-fpm:
+    build: build/php-fpm
+    image: masterhome/php-fpm
+    volumes:
+     - "..:/masterhome"
+     - "./build/php-fpm/php.ini:/etc/php/7.3/fpm/php.ini:ro"
+     - "./volumes/data:/opt/data"
+    ports:
+     - "127.0.0.1:9009:9000"
+    environment:
+      XDEBUG_CONFIG: >
+        idekey=PHPSTORM
+        remote_enable=1
+        remote_host=172.18.0.1
+        remote_port=9000
+        profiler_enable=0
+        coverage_enable=0
+    networks:
+     - master_home
+    depends_on:
+     - masterhome-postgresql
+
+  masterhome-php-cli:
+    build: build/php-cli
+    image: masterhome/php-cli
+    volumes:
+     - "..:/masterhome"
+     - "./build/php-cli/php.ini:/etc/php/7.3/cli/php.ini:ro"
+     - "./volumes/data:/opt/data"
+    ports:
+     - "127.0.0.1:9011:9000"
+     - "127.0.0.1:2222:22"
+    environment:
+      XDEBUG_CONFIG: >
+        idekey=PHPSTORM
+        remote_enable=1
+        remote_host=172.18.0.1
+        remote_port=9000
+        profiler_enable=0
+        coverage_enable=0
+    networks:
+     - master_home
+    depends_on:
+     - masterhome-postgresql
+     - masterhome-php-fpm
+
+  masterhome-php-worker:
+    build: build/php-fpm
+    image: masterhome/php-fpm
+    restart: always
+    entrypoint: "sh"
+    command: "/startup.sh"
+    ports:
+      - "127.0.0.1:9005:9005"
+      - "127.0.0.1:9012:9000"
+    volumes:
+      - "..:/masterhome"
+      - "./build/php-fpm/php.ini:/etc/php/7.3/fpm/php.ini:ro"
+      - "./build/php-fpm/supervisor:/etc/supervisor"
+      - "./volumes/data:/opt/data"
+      - "./volumes/data/php-fpm/logs:/var/www/html/logs"
+      - "./volumes/data/cache:/var/www/html/cache"
+    networks:
+      - master_home
+    depends_on:
+      - masterhome-rabbitmq
+
+  masterhome-node:
+    build: build/node
+    image: masterhome/node
+    volumes:
+     - "../frontend:/src"
+    ports:
+     - "127.0.0.1:3333:3333"
+    networks:
+     - master_home
+
+  masterhome-postgresql:
+    build: build/postgresql
+    image: masterhome/postgresql
+    volumes:
+     - "./volumes/pgdata:/var/lib/postgresql/data"
+     - "./volumes/data:/opt/data"
+    tmpfs:
+     - /run
+     - /tmp
+    ports:
+     - "127.0.0.1:5432:5432"
+    networks:
+     - master_home
+
+  masterhome-redis:
+    image: redis:3.0
+    ports:
+     - "127.0.0.1:6379:6379"
+    networks:
+     - master_home
+
+  masterhome-rabbitmq:
+    image: rabbitmq:3.7.8-management-alpine
+    hostname: masterhome-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: y6zYmsTtg4fNM95U
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./volumes/rabbitmq:/var/lib/rabbitmq
+    networks:
+      - master_home
+
+  masterhome-socketio:
+    build: build/node-server
+    image: masterhome/node-socketio
+    restart: unless-stopped
+    environment:
+      RABBIT_MQ_HOST: masterhome-rabbitmq
+      RABBIT_MQ_PORT: 5672
+    entrypoint: "sh"
+    command: /startup.sh npm run dev
+    volumes:
+      - "../socket-server:/src"
+    ports:
+      - "127.0.0.1:3335:3335"
+    networks:
+      - master_home
+    depends_on:
+      - masterhome-rabbitmq
+
+networks:
+  master_home:
+    external: true

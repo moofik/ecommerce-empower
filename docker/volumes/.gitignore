@@ -1,0 +1,5 @@
+nginx/
+composer/
+pgdata/
+data/
+rabbitmq/

@@ -1,0 +1,33 @@
+{
+  "name": "websocket-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "public/server.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "AUTH_TOKEN=SmF6Ry5YeXhYZzFnMmJuegHE78ztEMiFIYsBYvN6qXtD90pI0Z7XegFeyoQSwlkoA ts-node ./public/server.ts",
+    "start": "nodemon ./dist/server.js",
+    "prod": "npm run build && npm run start"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/amqplib": "^0.5.11",
+    "@types/express": "^4.16.1",
+    "@types/node": "^10.12.21",
+    "@types/socket.io": "^2.1.2",
+    "amqplib": "^0.5.3",
+    "body-parser": "^1.18.3",
+    "eslint": "^5.13.0",
+    "express": "^4.16.4",
+    "getenv": "^0.7.0",
+    "nodemon": "^1.18.9",
+    "socket.io": "^2.2.0",
+    "tslint": "^5.12.1"
+  },
+  "devDependencies": {
+    "inversify": "^5.0.1",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "^3.3.1"
+  }
+}

@@ -1,0 +1,24 @@
+App\Entity\User:
+  users_1:
+    firstName: 'admin'
+    lastName: 'admin'
+    username: 'admin'
+    password: '<password()>'
+    email (unique): '<email()>'
+    phone: '+7-913-123-45-67'
+    city: '<city()>'
+    hasAcceptedAgreement: '<boolean(100)>'
+    isPhoneRestricted: '<boolean(0)>'
+    isEmailRestricted: '<boolean(0)>'
+  users_{2..10}:
+    firstName: '<first_name()>'
+    lastName: '<last_name()>'
+    username (unique): '<username()>'
+    password: '<password()>'
+    email (unique): '<email()>'
+    phone: '+7-913-123-45-67'
+    city: '<city()>'
+    hasAcceptedAgreement: '<boolean(100)>'
+    isPhoneRestricted: '<boolean(50)>'
+    isEmailRestricted: '<boolean(50)>'
+
