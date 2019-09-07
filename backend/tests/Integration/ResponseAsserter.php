@@ -4,9 +4,9 @@ namespace App\Tests\Integration;
 
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PropertyAccess\Exception\AccessException;
 use Symfony\Component\PropertyAccess\Exception\RuntimeException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\Exception\AccessException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
@@ -78,6 +78,7 @@ class ResponseAsserter extends Assert
     public function assertResponsePropertyEquals(Response $response, $propertyPath, $expectedValue)
     {
         $actual = $this->readResponseProperty($response, $propertyPath);
+
         $this->assertEquals(
             $expectedValue,
             $actual,
@@ -128,6 +129,7 @@ class ResponseAsserter extends Assert
     public function assertResponsePropertyContains(Response $response, $propertyPath, $expectedValue)
     {
         $actualPropertyValue = $this->readResponseProperty($response, $propertyPath);
+
         $this->assertContains(
             $expectedValue,
             $actualPropertyValue,

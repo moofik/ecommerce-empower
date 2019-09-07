@@ -17,14 +17,17 @@ class ApiTestCaseDebugger
      * @var History
      */
     private static $history;
+
     /**
      * @var ApiClient
      */
     private static $client;
+
     /**
      * @var FormatterHelper
      */
     private $formatterHelper;
+
     /**
      * @var ConsoleOutput
      */
@@ -179,6 +182,7 @@ class ApiTestCaseDebugger
 
         return $result;
     }
+
     /**
      * Gets the start line of a message
      *

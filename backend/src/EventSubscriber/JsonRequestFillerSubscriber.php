@@ -2,9 +2,10 @@
 
 namespace App\EventSubscriber;
 
+use App\Service\Api\Problem\ApiProblem;
+use App\Service\Api\Problem\ApiProblemException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class JsonRequestFillerSubscriber implements EventSubscriberInterface
@@ -46,7 +47,8 @@ class JsonRequestFillerSubscriber implements EventSubscriberInterface
         $data = json_decode($request->getContent(), true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new BadRequestHttpException('Invalid json body: ' . json_last_error_msg());
+            $apiProblem = new ApiProblem(400, ApiProblem::TYPE_INVALID_REQUEST_BODY_FORMAT);
+            throw new ApiProblemException($apiProblem);
         }
 
         $request->request->replace(is_array($data) ? $data : []);

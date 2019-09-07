@@ -5,16 +5,20 @@ namespace App\Controller\Api;
 
 
 use App\Entity\Tag;
+use App\Form\TagType;
 use App\Repository\TagRepository;
 use App\Service\Api\ApiResponseTrait;
+use App\Service\Api\FormHandlerTrait;
+use App\Service\Api\Problem\ApiProblem;
+use App\Service\Api\Problem\ApiProblemException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JMS\Serializer\SerializerInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class TagController
@@ -22,7 +26,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class TagController extends AbstractController
 {
-    use ApiResponseTrait;
+    use ApiResponseTrait, FormHandlerTrait;
 
     /**
      * @var TagRepository
@@ -60,12 +64,21 @@ class TagController extends AbstractController
     public function create(Request $request): Response
     {
         $tag = new Tag();
-        $tag->setName($request->get('name'));
+        $form = $this->createForm(TagType::class, $tag);
+        $this->processForm($request, $form);
+
+        if (!$form->isValid()) {
+            $errors = $this->getErrorsFromForm($form);
+
+            return $this->createValidationErrorResponse($errors);
+        }
 
         try {
             $this->em->persist($tag);
             $this->em->flush();
         } catch (ORMException $e) {
+            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
+            throw new ApiProblemException($problem);
         }
 
         $redirectUrl = $this->generateUrl('api_get_tag', ['slug' => $tag->getSlug()]);
@@ -81,10 +94,16 @@ class TagController extends AbstractController
     public function delete(string $slug)
     {
         try {
-            $result = $this->tagRepository->findOneBySlug($slug);
-            $this->em->remove($result);
+            $tag = $this->tagRepository->findOneBySlug($slug);
+            $this->em->remove($tag);
             $this->em->flush();
         } catch (ORMException $e) {
+            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
+            throw new ApiProblemException($problem);
+        }
+
+        if ($tag === null) {
+            throw new NotFoundHttpException(sprintf('Tag with slug %s was not found', $slug));
         }
 
         return $this->createApiResponse(null, 204);
@@ -110,6 +129,12 @@ class TagController extends AbstractController
         try {
             $tag = $this->tagRepository->findOneBySlug($slug);
         } catch (ORMException $e) {
+            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
+            throw new ApiProblemException($problem);
+        }
+
+        if ($tag === null) {
+            throw new NotFoundHttpException(sprintf('Tag with slug %s was not found', $slug));
         }
 
         return $this->createApiResponse($tag, 200);

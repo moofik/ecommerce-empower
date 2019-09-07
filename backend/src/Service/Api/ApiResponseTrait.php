@@ -4,16 +4,15 @@
 namespace App\Service\Api;
 
 
-use App\Service\Api\ErrorHandling\ApiProblemException;
+use App\Service\Api\Problem\ApiProblem;
+use App\Service\Api\Problem\ApiProblemException;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 trait ApiResponseTrait
 {
-    /**
-     * @var SerializerInterface
-     */
     private $serializer;
 
     /**
@@ -38,5 +37,20 @@ trait ApiResponseTrait
             $statusCode,
             $headers
         );
+    }
+
+    /**
+     * @param array $errors
+     * @return Response
+     */
+    public function createValidationErrorResponse(array $errors): Response
+    {
+        $problem = new ApiProblem(400, ApiProblem::TYPE_VALIDATION_ERROR);
+        $problem->set('errors', $errors);
+
+        $response = new JsonResponse($problem->toArray(), $problem->getStatusCode());
+        $response->headers->set('Content-Type', 'application/problem+json');
+
+        return $response;
     }
 }

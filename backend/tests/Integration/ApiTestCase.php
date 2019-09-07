@@ -4,14 +4,9 @@
 namespace App\Tests\Integration;
 
 
-use App\Tests\Integration\ResponseAsserter;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpClient\CurlHttpClient;
-use Symfony\Component\HttpKernel\HttpKernelBrowser;
-use Throwable;
 
 
 class ApiTestCase extends WebTestCase
@@ -37,10 +32,10 @@ class ApiTestCase extends WebTestCase
     protected static $asserter;
 
     /**
-     * @param Throwable $t
-     * @throws Throwable
+     * @param \Throwable $t
+     * @throws \Throwable
      */
-    protected function onNotSuccessfulTest(Throwable $t)
+    protected function onNotSuccessfulTest(\Throwable $t)
     {
         if ($response = self::$debugger->getLastResponse()) {
             self::$debugger->printDebug('');
@@ -65,23 +60,25 @@ class ApiTestCase extends WebTestCase
         parent::bootKernel();
 
         self::$client = new ApiClient(self::$kernel);
+        self::$client->setServerParameter('CONTENT_TYPE', 'application/json');
         self::$debugger = new ApiTestCaseDebugger(self::$client);
+    }
+
+    public function tearDown()
+    {
+        //
     }
 
     /**
      * @return ResponseAsserter
      */
-    public function asserter()
+    protected function asserter()
     {
         if (null === self::$asserter) {
             self::$asserter = new ResponseAsserter();
         }
 
         return self::$asserter;
-    }
-
-    public function tearDown()
-    {
     }
 
     protected function purgeDatabase()

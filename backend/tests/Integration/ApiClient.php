@@ -24,4 +24,26 @@ final class ApiClient extends HttpKernelBrowser
 
         return $this->getResponse();
     }
+
+    /**
+     * @param string $method
+     * @param string $uri
+     * @param array $content
+     * @param array $server
+     * @return Response
+     */
+    public function jsonRequest(string $method, string $uri, array $content, array $server = []): Response
+    {
+        parent::request($method, $uri, [], [], $server, json_encode($content));
+
+        return $this->getResponse();
+    }
+
+    /**
+     * @param string $contentType
+     */
+    public function setRequestContentType(string $contentType): void
+    {
+        $this->setServerParameter('CONTENT_TYPE', $contentType);
+    }
 }

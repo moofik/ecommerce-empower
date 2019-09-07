@@ -4,15 +4,13 @@
 namespace App\Tests\Integration\Controller\Api;
 
 
+use App\Service\Api\Problem\ApiProblem;
 use App\Tests\Integration\ApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Throwable;
 
 class TagControllerTest extends ApiTestCase
 {
-    private const TAG_NAMES = ['cat', 'nofilter', 'like4like'];
-
     public function testGetAllTags()
     {
         $this->createTag('icecream');
@@ -60,14 +58,59 @@ class TagControllerTest extends ApiTestCase
         $this->asserter()->assertResponsePropertyEquals($response, 'slug', 'milk-1');
     }
 
-    public function testDeleteTag()
-    {
-        $response_1 = $this->createTag('milk');
-        $response_2 = self::$client->request('DELETE', '/api/tag/milk');
-        $response_3 = self::$client->request('GET', '/api/tag/milk');
+//    public function testDeleteTag()
+//    {
+//        $response_1 = $this->createTag('milk');
+//        $response_2 = self::$client->request('DELETE', '/api/tag/milk');
+//        $response_3 = self::$client->request('GET', '/api/tag/milk');
+//
+//        $this->assertEquals(204, $response_2->getStatusCode());
+//        $this->assertEquals(404, $response_3->getStatusCode());
+//    }
 
-        $this->assertEquals(204, $response_2->getStatusCode());
-        $this->assertEquals(404, $response_3->getStatusCode());
+    public function testTagValidationErrors()
+    {
+        // can not have empty name
+        $response = $this->createTag('');
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertiesExist($response, [
+            'type',
+            'title',
+            'errors',
+        ]);
+        $this->asserter()->assertResponsePropertyExists($response, 'errors.name');
+        $this->assertEquals('application/problem+json', $response->headers->get('Content-Type'));
+    }
+
+    public function testCreateWithInvalidJson()
+    {
+        $content = <<<EOF
+{
+    "name": "milk
+}
+EOF;
+
+        $response = self::$client->request('POST', '/api/tag', [], [], [], $content);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals('application/problem+json', $response->headers->get('Content-Type'));
+        $this->asserter()->assertResponsePropertyEquals(
+            $response,
+            'type',
+            ApiProblem::TYPE_INVALID_REQUEST_BODY_FORMAT
+        );
+    }
+
+    public function testGetNonExistantTag()
+    {
+        $response = self::$client->request('GET', '/api/tag/test');
+
+        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals('application/problem+json', $response->headers->get('Content-Type'));
+        $this->asserter()->assertResponsePropertyEquals($response, 'type', 'about:blank');
+        $this->asserter()->assertResponsePropertyEquals($response, 'title', 'Not Found');
+        $this->asserter()->assertResponsePropertyEquals($response, 'detail', 'Tag with slug test was not found');
     }
 
     /**
@@ -77,7 +120,6 @@ class TagControllerTest extends ApiTestCase
      */
     private function createTag(string $name): Response
     {
-        return $this->staticClient->request("POST", '/api/tag', ['name' => $name]);
+        return $this->staticClient->jsonRequest("POST", '/api/tag', ['name' => $name]);
     }
-
 }
