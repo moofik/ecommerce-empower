@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Facade;
 
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;

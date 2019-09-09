@@ -22,7 +22,7 @@ class Doctrine extends AbstractFacade
      */
     public static function getManager($name = null): EntityManagerInterface
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        /* @noinspection PhpIncompatibleReturnTypeInspection */
         return static::getRegistry()->getManager($name);
     }
 

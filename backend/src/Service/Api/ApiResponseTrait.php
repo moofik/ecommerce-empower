@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Api;
-
 
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
@@ -17,8 +15,9 @@ trait ApiResponseTrait
 
     /**
      * @param $data
-     * @param int $statusCode
+     * @param int   $statusCode
      * @param array $headers
+     *
      * @return Response
      */
     public function createApiResponse($data, int $statusCode, array $headers = []): Response
@@ -41,6 +40,7 @@ trait ApiResponseTrait
 
     /**
      * @param array $errors
+     *
      * @return Response
      */
     public function createValidationErrorResponse(array $errors): Response

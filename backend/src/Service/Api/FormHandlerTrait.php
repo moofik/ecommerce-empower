@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Api;
-
 
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
@@ -11,13 +9,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Require Symfony Form and Symfony Http Foundation
- * Trait FormHandlerTrait
- * @package App\Service\Api
+ * Trait FormHandlerTrait.
  */
 trait FormHandlerTrait
 {
     /**
-     * @param Request $request
+     * @param Request       $request
      * @param FormInterface $form
      */
     private function processForm(Request $request, FormInterface $form)
@@ -36,11 +33,12 @@ trait FormHandlerTrait
 
     /**
      * @param FormInterface $form
+     *
      * @return array
      */
     private function getErrorsFromForm(FormInterface $form)
     {
-        $errors = array();
+        $errors = [];
         foreach ($form->getErrors() as $error) {
             $errors[] = $error->getMessage();
         }

@@ -11,7 +11,7 @@ class NotificationFactory
     public const TYPE_NOTIFICATION_NEW_ORDER = 'notification_new_order';
 
     public const NOTIFICATION_TYPES = [
-      self::TYPE_NOTIFICATION_NEW_ORDER
+      self::TYPE_NOTIFICATION_NEW_ORDER,
     ];
 
     /**
@@ -26,7 +26,8 @@ class NotificationFactory
 
     /**
      * NotificationFactory constructor.
-     * @param EntityManagerInterface $entityManager
+     *
+     * @param EntityManagerInterface      $entityManager
      * @param NotificationMessageResolver $messageResolver
      */
     public function __construct(
@@ -39,30 +40,34 @@ class NotificationFactory
 
     /**
      * @param array $notificationData
-     * @return Notification
+     *
      * @throws NotificationFactoryException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\ORMException
+     *
+     * @return Notification
      */
     public function create(array $notificationData): Notification
     {
-       $type = $this->getNotificationType($notificationData);
+        $type = $this->getNotificationType($notificationData);
 
-       $notification = new Notification();
-       $notification->setType($type);
+        $notification = new Notification();
+        $notification->setType($type);
 
-       $addressee = $this->getNotificationAddressee($type, $notificationData);
-       $notification->setAddressee($addressee);
+        $addressee = $this->getNotificationAddressee($type, $notificationData);
+        $notification->setAddressee($addressee);
 
-       $notificationText = $this->messageResolver->getMessage($type, $addressee->getId());
-       $notification->setNotificationText($notificationText);
+        $notificationText = $this->messageResolver->getMessage($type, $addressee->getId());
+        $notification->setNotificationText($notificationText);
 
-       return $notification;
+        return $notification;
     }
 
     /**
      * @param array $notificationData
+     *
      * @throws NotificationFactoryException
+     *
      * @return string
      */
     private function getNotificationType(array $notificationData): string
@@ -73,6 +78,7 @@ class NotificationFactory
 
         if (!in_array($notificationData['type'], self::NOTIFICATION_TYPES)) {
             $errorMessage = sprintf('Notification type %s does not exist', $notificationData['type']);
+
             throw new NotificationFactoryException($errorMessage);
         }
 
@@ -81,9 +87,11 @@ class NotificationFactory
 
     /**
      * @param string $type
-     * @param array $notificationData
-     * @return User
+     * @param array  $notificationData
+     *
      * @throws \Doctrine\ORM\ORMException
+     *
+     * @return User
      */
     private function getNotificationAddressee(string $type, array $notificationData): User
     {

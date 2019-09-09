@@ -1,8 +1,8 @@
-<?php /** @noinspection ALL */
+<?php
 
+/** @noinspection ALL */
 
 namespace App\Tests\Integration\Controller\Api;
-
 
 use App\Service\Api\Problem\ApiProblem;
 use App\Tests\Integration\ApiTestCase;
@@ -17,14 +17,14 @@ class TagControllerTest extends ApiTestCase
         $this->createTag('nofilter');
         $this->createTag('peacock');
 
-        $response = $this->staticClient->request("GET", '/api/tags');
+        $response = $this->staticClient->request('GET', '/api/tags');
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
         $this->asserter()->assertResponsePropertyCount($response, 'items', 3);
-        $this->asserter()->assertResponsePropertyEquals($response,'items[0].name', 'icecream');
-        $this->asserter()->assertResponsePropertyEquals($response,'items[1].name', 'nofilter');
-        $this->asserter()->assertResponsePropertyEquals($response,'items[2].name', 'peacock');
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[0].name', 'icecream');
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[1].name', 'nofilter');
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[2].name', 'peacock');
     }
 
     public function testCreateAndGetOneTag()
@@ -85,7 +85,7 @@ class TagControllerTest extends ApiTestCase
 
     public function testCreateWithInvalidJson()
     {
-        $content = <<<EOF
+        $content = <<<'EOF'
 {
     "name": "milk
 }
@@ -115,11 +115,13 @@ EOF;
 
     /**
      * @param string $name
+     *
      * @throws TransportExceptionInterface
+     *
      * @return Response
      */
     private function createTag(string $name): Response
     {
-        return $this->staticClient->jsonRequest("POST", '/api/tag', ['name' => $name]);
+        return $this->staticClient->jsonRequest('POST', '/api/tag', ['name' => $name]);
     }
 }

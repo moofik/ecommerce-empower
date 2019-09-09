@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Api\Problem;
-
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
@@ -16,10 +14,11 @@ class ApiProblemException extends HttpException
 
     /**
      * ApiProblemException constructor.
-     * @param ApiProblem $apiProblem
+     *
+     * @param ApiProblem     $apiProblem
      * @param Throwable|null $t
-     * @param array $headers
-     * @param int $code
+     * @param array          $headers
+     * @param int            $code
      */
     public function __construct(ApiProblem $apiProblem, Throwable $t = null, array $headers = [], ?int $code = null)
     {

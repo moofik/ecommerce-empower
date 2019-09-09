@@ -2,9 +2,7 @@
 
 namespace App\Service\Notification;
 
-use App\Repository\NotificationRepository;
 use App\Repository\OrderRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class NotificationMessageResolver
 {
@@ -15,6 +13,7 @@ class NotificationMessageResolver
 
     /**
      * NotificationMessageFactory constructor.
+     *
      * @param OrderRepository $orderRepository
      */
     public function __construct(OrderRepository $orderRepository)
@@ -24,10 +23,12 @@ class NotificationMessageResolver
 
     /**
      * @param string $type
-     * @param int $userId
-     * @return string|null
+     * @param int    $userId
+     *
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\ORMException
+     *
+     * @return string|null
      */
     public function getMessage(string $type, int $userId): ?string
     {

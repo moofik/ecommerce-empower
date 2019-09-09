@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Controller\Api;
-
 
 use App\Entity\Item;
 use App\Repository\ItemRepository;
@@ -36,9 +34,10 @@ class ItemController extends AbstractController
 
     /**
      * TagController constructor.
-     * @param ItemRepository $itemRepository
+     *
+     * @param ItemRepository         $itemRepository
      * @param EntityManagerInterface $em
-     * @param SerializerInterface $serializer
+     * @param SerializerInterface    $serializer
      */
     public function __construct(ItemRepository $itemRepository, EntityManagerInterface $em, SerializerInterface $serializer)
     {
@@ -49,7 +48,9 @@ class ItemController extends AbstractController
 
     /**
      * @Route("/api/item", methods={"POST"}, name="api_create_item")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function create(Request $request): Response
@@ -70,7 +71,9 @@ class ItemController extends AbstractController
 
     /**
      * @Route("/api/item/{slug}", methods={"DELETE"}, name="api_delete_item")
+     *
      * @param string $slug
+     *
      * @return Response
      */
     public function delete(string $slug)
@@ -97,7 +100,9 @@ class ItemController extends AbstractController
 
     /**
      * @Route("/api/item/{slug}", methods={"GET"}, name="api_get_item")
+     *
      * @param string $slug
+     *
      * @return Response
      */
     public function getOne(string $slug)

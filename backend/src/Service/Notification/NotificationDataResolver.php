@@ -17,12 +17,12 @@ class NotificationDataResolver
         $type = NotificationFactory::TYPE_NOTIFICATION_NEW_ORDER;
 
         return [
-            'orderId' => $orderId,
-            'serviceId' => $serviceId,
-            'userProviderId' => $userProviderId,
-            'userCustomerId' => $userCustomerId,
+            'orderId'                 => $orderId,
+            'serviceId'               => $serviceId,
+            'userProviderId'          => $userProviderId,
+            'userCustomerId'          => $userCustomerId,
             'userCustomerAccessToken' => $userCustomerAccessToken,
-            'type' => $type,
+            'type'                    => $type,
         ];
     }
 }
