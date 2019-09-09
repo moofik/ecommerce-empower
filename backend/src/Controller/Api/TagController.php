@@ -11,6 +11,7 @@ use App\Service\Api\ApiResponseTrait;
 use App\Service\Api\FormHandlerTrait;
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
+use App\Service\Pagination\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JMS\Serializer\SerializerInterface;
@@ -111,12 +112,24 @@ class TagController extends AbstractController
 
     /**
      * @Route("/api/tags", methods={"GET"}, name="api_get_tags")
+     * @param Request $request
+     * @param Paginator $paginator
+     * @return Response
      */
-    public function getAll()
+    public function getAll(Request $request, Paginator $paginator)
     {
-        $tags = $this->tagRepository->findAll();
+        $page = $request->query->get('page', 1);
+        $queryBuilder = $this->tagRepository->findAllQueryBuilder();
+        $collection = $paginator->paginate($queryBuilder, $page);
 
-        return $this->createApiResponse(['items' => $tags], 200);
+        $route = 'api_get_tags';
+        $routeParams = [];
+        $createLinkUrl = function ($targetPage) {
+
+        };
+        $collection->addLink('self',);
+
+        return $this->createApiResponse($collection, 200);
     }
 
     /**

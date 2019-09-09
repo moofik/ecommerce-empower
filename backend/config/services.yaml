@@ -28,6 +28,13 @@ services:
         arguments:
             - '%kernel.project_dir%'
 
+    App\EventSubscriber\ApiExceptionSubscriber:
+        public: false
+        class: App\EventSubscriber\ApiExceptionSubscriber
+        arguments: ['%kernel.debug%', 'http://masterhome.local/docs/errors#']
+        tags:
+            - { name: kernel.event_subscriber }
+
     JMS\Serializer\SerializerInterface: '@jms_serializer'
 
     gedmo.listener.timestampable:
