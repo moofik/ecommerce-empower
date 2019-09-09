@@ -48,7 +48,7 @@ final class CategoryProvider
         'Пирсинг и тату' => [
             'Пирсинг',
             'Тату',
-        ]
+        ],
     ];
 
     /**
@@ -68,6 +68,7 @@ final class CategoryProvider
 
     /**
      * @param string $categoryName
+     *
      * @return int
      */
     public static function parent(string $categoryName): int
@@ -82,6 +83,7 @@ final class CategoryProvider
 
     /**
      * @param int $category
+     *
      * @return string
      */
     public static function category(int $category): string
@@ -91,6 +93,7 @@ final class CategoryProvider
 
     /**
      * @param string $category
+     *
      * @return string
      */
     public static function subcategory(string $category): string

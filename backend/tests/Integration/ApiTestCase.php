@@ -1,13 +1,10 @@
 <?php
 
-
 namespace App\Tests\Integration;
-
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-
 
 class ApiTestCase extends WebTestCase
 {
@@ -33,6 +30,7 @@ class ApiTestCase extends WebTestCase
 
     /**
      * @param \Throwable $t
+     *
      * @throws \Throwable
      */
     protected function onNotSuccessfulTest(\Throwable $t)

@@ -50,8 +50,10 @@ class ItemRepository extends ServiceEntityRepository
 
     /**
      * @param string $value
-     * @return Item|null
+     *
      * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @return Item|null
      */
     public function findOneBySlug(string $value): ?Item
     {

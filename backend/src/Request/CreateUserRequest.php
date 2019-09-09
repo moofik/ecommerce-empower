@@ -56,7 +56,7 @@ class CreateUserRequest implements RequestDTOInterface
     private $city;
 
     /**
-     * @var boolean
+     * @var bool
      * @Assert\NotBlank()
      * @Assert\Type(type="bool")
      */
@@ -83,6 +83,7 @@ class CreateUserRequest implements RequestDTOInterface
 
     /**
      * CreateUserRequest constructor.
+     *
      * @param Request $request
      */
     public function __construct(Request $request)

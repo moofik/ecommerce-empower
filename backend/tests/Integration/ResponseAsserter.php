@@ -1,4 +1,6 @@
-<?php /** @noinspection ALL */
+<?php
+
+/** @noinspection ALL */
 
 namespace App\Tests\Integration;
 
@@ -10,7 +12,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
- * Helper class to assert different conditions on HttpClient responses
+ * Helper class to assert different conditions on HttpClient responses.
  */
 class ResponseAsserter extends Assert
 {
@@ -20,10 +22,11 @@ class ResponseAsserter extends Assert
     private $accessor;
 
     /**
-     * Asserts the array of property names are in the JSON response
+     * Asserts the array of property names are in the JSON response.
      *
      * @param Response $response
-     * @param array $expectedProperties
+     * @param array    $expectedProperties
+     *
      * @throws \Throwable
      */
     public function assertResponsePropertiesExist(Response $response, array $expectedProperties)
@@ -35,10 +38,11 @@ class ResponseAsserter extends Assert
     }
 
     /**
-     * Asserts the specific propertyPath is in the JSON response
+     * Asserts the specific propertyPath is in the JSON response.
      *
      * @param Response $response
-     * @param string $propertyPath e.g. firstName, battles[0].programmer.username
+     * @param string   $propertyPath e.g. firstName, battles[0].programmer.username
+     *
      * @throws \Throwable
      */
     public function assertResponsePropertyExists(Response $response, $propertyPath)
@@ -48,10 +52,11 @@ class ResponseAsserter extends Assert
     }
 
     /**
-     * Asserts the given property path does *not* exist
+     * Asserts the given property path does *not* exist.
      *
      * @param Response $response
-     * @param string $propertyPath e.g. firstName, battles[0].programmer.username
+     * @param string   $propertyPath e.g. firstName, battles[0].programmer.username
+     *
      * @throws \Throwable
      */
     public function assertResponsePropertyDoesNotExist(Response $response, $propertyPath)
@@ -68,11 +73,12 @@ class ResponseAsserter extends Assert
     }
 
     /**
-     * Asserts the response JSON property equals the given value
+     * Asserts the response JSON property equals the given value.
      *
      * @param Response $response
-     * @param string $propertyPath e.g. firstName, battles[0].programmer.username
-     * @param mixed $expectedValue
+     * @param string   $propertyPath  e.g. firstName, battles[0].programmer.username
+     * @param mixed    $expectedValue
+     *
      * @throws \Throwable
      */
     public function assertResponsePropertyEquals(Response $response, $propertyPath, $expectedValue)
@@ -92,10 +98,11 @@ class ResponseAsserter extends Assert
     }
 
     /**
-     * Asserts the response property is an array
+     * Asserts the response property is an array.
      *
      * @param Response $response
-     * @param string $propertyPath e.g. firstName, battles[0].programmer.username
+     * @param string   $propertyPath e.g. firstName, battles[0].programmer.username
+     *
      * @throws \Throwable
      */
     public function assertResponsePropertyIsArray(Response $response, $propertyPath)
@@ -104,26 +111,28 @@ class ResponseAsserter extends Assert
     }
 
     /**
-     * Asserts the given response property (probably an array) has the expected "count"
+     * Asserts the given response property (probably an array) has the expected "count".
      *
      * @param Response $response
-     * @param string $propertyPath e.g. firstName, battles[0].programmer.username
-     * @param integer $expectedCount
+     * @param string   $propertyPath  e.g. firstName, battles[0].programmer.username
+     * @param int      $expectedCount
+     *
      * @throws \Throwable
      */
     public function assertResponsePropertyCount(Response $response, $propertyPath, $expectedCount)
     {
-        $this->assertCount((int)$expectedCount, $this->readResponseProperty($response, $propertyPath));
+        $this->assertCount((int) $expectedCount, $this->readResponseProperty($response, $propertyPath));
     }
 
     /**
-     * Asserts the specific response property contains the given value
+     * Asserts the specific response property contains the given value.
      *
      * e.g. "Hello world!" contains "world"
      *
      * @param Response $response
-     * @param string $propertyPath e.g. firstName, battles[0].programmer.username
-     * @param mixed $expectedValue
+     * @param string   $propertyPath  e.g. firstName, battles[0].programmer.username
+     * @param mixed    $expectedValue
+     *
      * @throws \Throwable
      */
     public function assertResponsePropertyContains(Response $response, $propertyPath, $expectedValue)
@@ -143,14 +152,16 @@ class ResponseAsserter extends Assert
     }
 
     /**
-     * Reads a JSON response property and returns the value
+     * Reads a JSON response property and returns the value.
      *
      * This will explode if the value does not exist
      *
      * @param Response $response
-     * @param string $propertyPath e.g. firstName, battles[0].programmer.username
-     * @return mixed
+     * @param string   $propertyPath e.g. firstName, battles[0].programmer.username
+     *
      * @throws \Throwable
+     *
+     * @return mixed
      */
     public function readResponseProperty(Response $response, $propertyPath)
     {
@@ -158,7 +169,7 @@ class ResponseAsserter extends Assert
             $this->accessor = PropertyAccess::createPropertyAccessor();
         }
 
-        $data = json_decode((string)$response->getContent());
+        $data = json_decode((string) $response->getContent());
 
         if ($data === null) {
             throw new \Exception(sprintf(

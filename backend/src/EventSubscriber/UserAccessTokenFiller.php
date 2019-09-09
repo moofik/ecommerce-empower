@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 class UserAccessTokenFiller implements EventSubscriberInterface
 {
@@ -18,6 +17,7 @@ class UserAccessTokenFiller implements EventSubscriberInterface
 
     /**
      * UserAccessTokenFiller constructor.
+     *
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
@@ -32,13 +32,14 @@ class UserAccessTokenFiller implements EventSubscriberInterface
     {
         return [
             Events::JWT_CREATED => [
-                ['onJWTCreated', 0]
-            ]
+                ['onJWTCreated', 0],
+            ],
         ];
     }
 
     /**
      * @param JWTCreatedEvent $event
+     *
      * @throws \Exception
      */
     public function onJWTCreated(JWTCreatedEvent $event): void

@@ -7,7 +7,7 @@ use Psr\Container\ContainerInterface;
 /**
  * Class AbstractFacade
  * Абстрактный фасад позволяет сделать статическую обертку над контейнером для получения сервисов
- * Нужен для получения сервиса, когда его невозможно передать как зависимость
+ * Нужен для получения сервиса, когда его невозможно передать как зависимость.
  */
 abstract class AbstractFacade
 {
@@ -28,7 +28,7 @@ abstract class AbstractFacade
     }
 
     /**
-     * Для reboot-а в ядре Symfony
+     * Для reboot-а в ядре Symfony.
      */
     public static function clearContainer(): void
     {

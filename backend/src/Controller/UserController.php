@@ -1,13 +1,11 @@
 <?php
 
-
 namespace App\Controller;
-
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\Routing\Annotation\Route;
 
 class UserController
 {
@@ -18,6 +16,7 @@ class UserController
 
     /**
      * UserController constructor.
+     *
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)

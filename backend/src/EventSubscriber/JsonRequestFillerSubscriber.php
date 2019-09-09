@@ -17,6 +17,7 @@ class JsonRequestFillerSubscriber implements EventSubscriberInterface
 
     /**
      * RequestFillerSubscriber constructor.
+     *
      * @param RequestStack $requestStack
      */
     public function __construct(RequestStack $requestStack)
@@ -48,6 +49,7 @@ class JsonRequestFillerSubscriber implements EventSubscriberInterface
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             $apiProblem = new ApiProblem(400, ApiProblem::TYPE_INVALID_REQUEST_BODY_FORMAT);
+
             throw new ApiProblemException($apiProblem);
         }
 

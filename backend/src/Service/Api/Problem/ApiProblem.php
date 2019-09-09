@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Api\Problem;
-
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,9 +11,9 @@ class ApiProblem
     public const TYPE_SERVER_DATABASE_ERROR = 'server_database_error';
 
     private const ERROR_TITLES = [
-        self::TYPE_VALIDATION_ERROR => 'There is a validation error',
+        self::TYPE_VALIDATION_ERROR            => 'There is a validation error',
         self::TYPE_INVALID_REQUEST_BODY_FORMAT => 'Invalid request body format',
-        self::TYPE_SERVER_DATABASE_ERROR => 'There is a database error on server',
+        self::TYPE_SERVER_DATABASE_ERROR       => 'There is a database error on server',
     ];
 
     /**
@@ -40,7 +38,8 @@ class ApiProblem
 
     /**
      * ApiProblem constructor.
-     * @param int $statusCode
+     *
+     * @param int    $statusCode
      * @param string $type
      */
     public function __construct(int $statusCode, string $type = 'about:blank')
@@ -70,8 +69,8 @@ class ApiProblem
             $this->extraData,
             [
                 'status' => $this->statusCode,
-                'type' => $this->type,
-                'title' => $this->title,
+                'type'   => $this->type,
+                'title'  => $this->title,
             ]
         );
     }
