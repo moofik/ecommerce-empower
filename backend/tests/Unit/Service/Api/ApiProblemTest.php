@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Unit\Service\Api;
-
 
 use App\Service\Api\Problem\ApiProblem;
 use PHPUnit\Framework\TestCase;
@@ -25,8 +23,8 @@ class ApiProblemTest extends TestCase
 
         $this->assertEquals([
             'status' => 400,
-            'type' => 'validation_error',
-            'title' => 'There is a validation error'
+            'type'   => 'validation_error',
+            'title'  => 'There is a validation error',
         ], $array);
     }
 
@@ -38,8 +36,8 @@ class ApiProblemTest extends TestCase
 
         $this->assertEquals([
             'status' => 400,
-            'type' => 'validation_error',
-            'title' => 'There is a validation error',
+            'type'   => 'validation_error',
+            'title'  => 'There is a validation error',
             'test_1' => 'test',
             'test_2' => 0,
         ], $array);
@@ -59,8 +57,8 @@ class ApiProblemTest extends TestCase
 
         $this->assertEquals($array, [
             'status' => 404,
-            'type' => 'about:blank',
-            'title' => 'Not Found'
+            'type'   => 'about:blank',
+            'title'  => 'Not Found',
         ]);
     }
 

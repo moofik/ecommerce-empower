@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\DataFixtures\ORM;
 
 use App\DataFixtures\CustomNativeLoader;
@@ -16,6 +15,7 @@ class LoadFixtures extends Fixture
 
     /**
      * LoadFixtures constructor.
+     *
      * @param string $rootDirectory
      */
     public function __construct($rootDirectory)
@@ -31,19 +31,19 @@ class LoadFixtures extends Fixture
         $loader = new CustomNativeLoader();
 
         $objectSet = $loader->loadFile('fixtures/users.yaml')->getObjects();
-        foreach($objectSet as $object) {
+        foreach ($objectSet as $object) {
             $manager->persist($object);
         }
         $manager->flush();
 
         $objectSet = $loader->loadFile('fixtures/categories.yaml')->getObjects();
-        foreach($objectSet as $object) {
+        foreach ($objectSet as $object) {
             $manager->persist($object);
         }
         $manager->flush();
 
         $objectSet = $loader->loadFile('fixtures/subcategories.yaml')->getObjects();
-        foreach($objectSet as $object) {
+        foreach ($objectSet as $object) {
             $manager->persist($object);
         }
         $manager->flush();

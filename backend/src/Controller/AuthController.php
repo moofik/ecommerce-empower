@@ -2,11 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Request\CreateUserRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Entity\User;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
@@ -15,9 +15,10 @@ class AuthController extends AbstractController
     /**
      * @Route("/register", name="register", methods={"POST"})
      *
-     * @param CreateUserRequest $request
+     * @param CreateUserRequest            $request
      * @param UserPasswordEncoderInterface $passwordEncoder
-     * @param EntityManagerInterface $entityManager
+     * @param EntityManagerInterface       $entityManager
+     *
      * @return JsonResponse
      */
     public function register(
@@ -47,6 +48,7 @@ class AuthController extends AbstractController
 
     /**
      * @Route("/api/test", name="apitest", methods={"GET", "POST"})
+     *
      * @return JsonResponse
      */
     public function api()

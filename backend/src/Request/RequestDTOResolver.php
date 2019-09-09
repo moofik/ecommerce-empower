@@ -18,6 +18,7 @@ class RequestDTOResolver implements ArgumentValueResolverInterface
 
     /**
      * RequestDTOResolver constructor.
+     *
      * @param ValidatorInterface $validator
      */
     public function __construct(ValidatorInterface $validator)
@@ -26,7 +27,7 @@ class RequestDTOResolver implements ArgumentValueResolverInterface
     }
 
     /**
-     * @param Request $request
+     * @param Request          $request
      * @param ArgumentMetadata $argument
      *
      * @return bool
@@ -47,7 +48,7 @@ class RequestDTOResolver implements ArgumentValueResolverInterface
     }
 
     /**
-     * @param Request $request
+     * @param Request          $request
      * @param ArgumentMetadata $argument
      *
      * @return \Generator

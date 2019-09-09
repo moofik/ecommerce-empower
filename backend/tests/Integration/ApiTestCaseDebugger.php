@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Integration;
-
 
 use Symfony\Component\BrowserKit\History;
 use Symfony\Component\Console\Helper\FormatterHelper;
@@ -35,6 +33,7 @@ class ApiTestCaseDebugger
 
     /**
      * ApiTestCaseDebugger constructor.
+     *
      * @param ApiClient $client
      */
     public function __construct(ApiClient $client)
@@ -77,7 +76,7 @@ class ApiTestCaseDebugger
 
                 $this->printErrorBlock('There was an Error! Details:');
 
-                foreach ($crawler->filter('h1, h2')->extract(array('_text')) as $header) {
+                foreach ($crawler->filter('h1, h2')->extract(['_text']) as $header) {
                     if (strpos($header, 'Stack Trace') !== false) {
                         continue;
                     }
@@ -117,7 +116,7 @@ class ApiTestCaseDebugger
     }
 
     /**
-     * Print a message out - useful for debugging
+     * Print a message out - useful for debugging.
      *
      * @param $string
      */
@@ -131,7 +130,7 @@ class ApiTestCaseDebugger
     }
 
     /**
-     * Print a debugging message out in a big red block
+     * Print a debugging message out in a big red block.
      *
      * @param $string
      */
@@ -154,7 +153,7 @@ class ApiTestCaseDebugger
     }
 
     /**
-     * Gets the start-line and headers of a message as a string
+     * Gets the start-line and headers of a message as a string.
      *
      * @param Response|Request $message
      *
@@ -162,11 +161,11 @@ class ApiTestCaseDebugger
      */
     private static function getStartLineAndHeaders($message)
     {
-        return static::getStartLine($message) . self::getHeadersAsString($message);
+        return static::getStartLine($message).self::getHeadersAsString($message);
     }
 
     /**
-     * Gets the headers of a message as a string
+     * Gets the headers of a message as a string.
      *
      * @param Response|Request $message
      *
@@ -174,29 +173,30 @@ class ApiTestCaseDebugger
      */
     private static function getHeadersAsString($message)
     {
-        $result  = '';
+        $result = '';
 
         foreach ($message->headers as $name => $values) {
-            $result .= "\r\n{$name}: " . implode(', ', $values);
+            $result .= "\r\n{$name}: ".implode(', ', $values);
         }
 
         return $result;
     }
 
     /**
-     * Gets the start line of a message
+     * Gets the start line of a message.
      *
      * @param Request|Response $message
      *
-     * @return string
      * @throws \InvalidArgumentException
+     *
+     * @return string
      */
     private static function getStartLine($message)
     {
         if ($message instanceof Request) {
-            return trim($message->getMethod() . ' ' . $message->getUri()) . ' HTTP/' . $message->getProtocolVersion();
+            return trim($message->getMethod().' '.$message->getUri()).' HTTP/'.$message->getProtocolVersion();
         } elseif ($message instanceof Response) {
-            return 'HTTP/' . $message->getProtocolVersion() . ' ' . $message->getStatusCode();
+            return 'HTTP/'.$message->getProtocolVersion().' '.$message->getStatusCode();
         } else {
             throw new \InvalidArgumentException('Unknown message type');
         }

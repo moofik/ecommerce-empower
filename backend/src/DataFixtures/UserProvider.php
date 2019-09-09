@@ -11,21 +11,21 @@ final class UserProvider
         'Москва',
         'Новосибирск',
         'Казань',
-        'Колхозная Ахтуба'
+        'Колхозная Ахтуба',
     ];
 
     private const NAMES = [
         'Евгений',
         'Александр',
         'Иван',
-        'Олег'
+        'Олег',
     ];
 
     private const LAST_NAMES = [
         'Орловский',
         'Петров',
         'Огурцов',
-        'Иванов'
+        'Иванов',
     ];
 
     private const EMAIL_PARTS = [
@@ -59,7 +59,7 @@ final class UserProvider
         'agency',
         'schizoid',
         'paranoid',
-        'melancholia'
+        'melancholia',
     ];
 
     private const EMAIL_DOMAINS = [
@@ -78,12 +78,13 @@ final class UserProvider
     ];
 
     /**
-     * @return string
      * @throws \Exception
+     *
+     * @return string
      */
     public static function username(): string
     {
-        return self::EMAIL_PARTS[array_rand(self::EMAIL_PARTS)] . random_int(1, 1000);
+        return self::EMAIL_PARTS[array_rand(self::EMAIL_PARTS)].random_int(1, 1000);
     }
 
     /**
@@ -100,8 +101,8 @@ final class UserProvider
     public static function email(): string
     {
         return self::EMAIL_PARTS[array_rand(self::EMAIL_PARTS)]
-            . self::EMAIL_PARTS[array_rand(self::EMAIL_PARTS)]
-            . self::EMAIL_DOMAINS[array_rand(self::EMAIL_DOMAINS)];
+            .self::EMAIL_PARTS[array_rand(self::EMAIL_PARTS)]
+            .self::EMAIL_DOMAINS[array_rand(self::EMAIL_DOMAINS)];
     }
 
     /**

@@ -2,10 +2,10 @@
 
 namespace App\DataFixtures;
 
-use Nelmio\Alice\Faker\Provider\AliceProvider;
-use Nelmio\Alice\Loader\NativeLoader;
 use Faker\Factory as FakerGeneratorFactory;
 use Faker\Generator as FakerGenerator;
+use Nelmio\Alice\Faker\Provider\AliceProvider;
+use Nelmio\Alice\Loader\NativeLoader;
 
 class CustomNativeLoader extends NativeLoader
 {

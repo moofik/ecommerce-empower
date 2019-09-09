@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Controller\Api;
-
 
 use App\Entity\Tag;
 use App\Form\TagType;
@@ -22,8 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class TagController
- * @package App\Controller\Api
+ * Class TagController.
  */
 class TagController extends AbstractController
 {
@@ -46,9 +43,10 @@ class TagController extends AbstractController
 
     /**
      * TagController constructor.
-     * @param TagRepository $tagRepository
+     *
+     * @param TagRepository          $tagRepository
      * @param EntityManagerInterface $em
-     * @param SerializerInterface $serializer
+     * @param SerializerInterface    $serializer
      */
     public function __construct(TagRepository $tagRepository, EntityManagerInterface $em, SerializerInterface $serializer)
     {
@@ -59,7 +57,9 @@ class TagController extends AbstractController
 
     /**
      * @Route("/api/tag", methods={"POST"}, name="api_create_tag")
+     *
      * @param Request $request
+     *
      * @return Response
      */
     public function create(Request $request): Response
@@ -79,6 +79,7 @@ class TagController extends AbstractController
             $this->em->flush();
         } catch (ORMException $e) {
             $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
+
             throw new ApiProblemException($problem);
         }
 
@@ -89,7 +90,9 @@ class TagController extends AbstractController
 
     /**
      * @Route("/api/tag/{slug}", methods={"DELETE"}, name="api_delete_tag")
+     *
      * @param string $slug
+     *
      * @return Response
      */
     public function delete(string $slug)
@@ -100,6 +103,7 @@ class TagController extends AbstractController
             $this->em->flush();
         } catch (ORMException $e) {
             $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
+
             throw new ApiProblemException($problem);
         }
 
@@ -134,7 +138,9 @@ class TagController extends AbstractController
 
     /**
      * @Route("/api/tag/{slug}", methods={"GET"}, name="api_get_tag")
+     *
      * @param string $slug
+     *
      * @return Response
      */
     public function getOne(string $slug)
@@ -143,6 +149,7 @@ class TagController extends AbstractController
             $tag = $this->tagRepository->findOneBySlug($slug);
         } catch (ORMException $e) {
             $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
+
             throw new ApiProblemException($problem);
         }
 

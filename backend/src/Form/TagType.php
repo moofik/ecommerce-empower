@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Form;
-
 
 use App\Entity\Tag;
 use Symfony\Component\Form\AbstractType;
@@ -20,8 +18,8 @@ class TagType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Tag::class,
-            'is_edit' => false,
+            'data_class'      => Tag::class,
+            'is_edit'         => false,
             'csrf_protection' => false,
         ]);
     }

@@ -39,8 +39,10 @@ class TagRepository extends ServiceEntityRepository
 
     /**
      * @param string $value
-     * @return Tag|null
+     *
      * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @return Tag|null
      */
     public function findOneBySlug(string $value): ?Tag
     {
