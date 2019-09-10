@@ -9,6 +9,7 @@ use App\Service\Api\ApiResponseTrait;
 use App\Service\Api\FormHandlerTrait;
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
+use App\Service\Pagination\PaginatedCollectionFactory;
 use App\Service\Pagination\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
@@ -117,21 +118,15 @@ class TagController extends AbstractController
     /**
      * @Route("/api/tags", methods={"GET"}, name="api_get_tags")
      * @param Request $request
-     * @param Paginator $paginator
+     * @param PaginatedCollectionFactory $factory
      * @return Response
      */
-    public function getAll(Request $request, Paginator $paginator)
+    public function getAll(Request $request, PaginatedCollectionFactory $factory)
     {
         $page = $request->query->get('page', 1);
-        $queryBuilder = $this->tagRepository->findAllQueryBuilder();
-        $collection = $paginator->paginate($queryBuilder, $page);
-
-        $route = 'api_get_tags';
-        $routeParams = [];
-        $createLinkUrl = function ($targetPage) {
-
-        };
-        $collection->addLink('self',);
+        $qb = $this->tagRepository->findAllQueryBuilder();
+        $qbCount = $this->tagRepository->getCountQueryBuilder();
+        $collection = $factory->createCollection($qb, $qbCount,'api_get_tags', [], $page, 10);
 
         return $this->createApiResponse($collection, 200);
     }

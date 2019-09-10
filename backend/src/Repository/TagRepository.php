@@ -60,4 +60,13 @@ class TagRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('tag');
     }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function getCountQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('tag')
+            ->select('COUNT(tag.id)');
+    }
 }

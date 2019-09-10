@@ -19,29 +19,31 @@ class TagControllerTest extends ApiTestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
-        $this->asserter()->assertResponsePropertyCount($response, 'count', 10);
-        $this->asserter()->assertResponsePropertyCount($response, 'total', 25);
+        $this->asserter()->assertResponsePropertyEquals($response, 'count', 10);
+        $this->asserter()->assertResponsePropertyEquals($response, 'total', 25);
         $this->asserter()->assertResponsePropertyEquals($response,'items[0].name', 'tag0');
         $this->asserter()->assertResponsePropertyEquals($response,'items[1].name', 'tag1');
         $this->asserter()->assertResponsePropertyEquals($response,'items[2].name', 'tag2');
         $this->asserter()->assertResponsePropertyExists($response,'_links.next');
+        $this->asserter()->assertResponsePropertyDoesNotExist($response, '_links.prev');
 
         $nextUrl = $this->asserter()->readResponseProperty($response, '_links.next');
         $response = $this->staticClient->request('GET', $nextUrl);
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
-        $this->asserter()->assertResponsePropertyCount($response, 'count', 10);
+        $this->asserter()->assertResponsePropertyEquals($response, 'count', 10);
         $this->asserter()->assertResponsePropertyEquals($response,'items[0].name', 'tag10');
         $this->asserter()->assertResponsePropertyExists($response, '_links.next');
+        $this->asserter()->assertResponsePropertyExists($response, '_links.prev');
 
         $lastUrl = $this->asserter()->readResponseProperty($response, '_links.last');
-        $response = $this->staticClient->request('GET', $nextUrl);
+        $response = $this->staticClient->request('GET', $lastUrl);
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
-        $this->asserter()->assertResponsePropertyCount($response, 'count', 5);
-
+        $this->asserter()->assertResponsePropertyEquals($response, 'count', 5);
         $this->asserter()->assertResponsePropertyEquals($response,'items[4].name', 'tag24');
-        $this->asserter()->assertResponsePropertyExists($response, '_links.next');
+        $this->asserter()->assertResponsePropertyExists($response, '_links.prev');
+        $this->asserter()->assertResponsePropertyDoesNotExist($response, '_links.next');
         $this->asserter()->assertResponsePropertyDoesNotExist($response, 'items[5].name');
     }
 

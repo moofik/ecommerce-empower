@@ -24,7 +24,7 @@ class PaginatedCollection
     /**
      * @var array
      */
-    private $links;
+    private $_links;
 
     /**
      * PaginatedCollection constructor.
@@ -44,6 +44,6 @@ class PaginatedCollection
      */
     public function addLink(string $rel, string $url)
     {
-        $this->links[$rel] = $url;
+        $this->_links[$rel] = $url;
     }
 }
