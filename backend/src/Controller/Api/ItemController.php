@@ -3,19 +3,28 @@
 namespace App\Controller\Api;
 
 use App\Entity\Item;
+use App\Form\ItemType;
 use App\Repository\ItemRepository;
 use App\Service\Api\ApiResponseTrait;
+use App\Service\Api\FormHandlerTrait;
+use App\Service\Api\Problem\ApiProblem;
+use App\Service\Api\Problem\ApiProblemException;
+use App\Service\Pagination\PaginatedCollectionFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class ItemController.
+ */
 class ItemController extends AbstractController
 {
-    use ApiResponseTrait;
+    use ApiResponseTrait, FormHandlerTrait;
 
     /**
      * @var ItemRepository
@@ -33,9 +42,9 @@ class ItemController extends AbstractController
     private $serializer;
 
     /**
-     * TagController constructor.
+     * ItemController constructor.
      *
-     * @param ItemRepository         $itemRepository
+     * @param ItemRepository          $itemRepository
      * @param EntityManagerInterface $em
      * @param SerializerInterface    $serializer
      */
@@ -56,12 +65,23 @@ class ItemController extends AbstractController
     public function create(Request $request): Response
     {
         $item = new Item();
-        //@todo
+        $form = $this->createForm(ItemType::class, $item);
+        /** @noinspection DuplicatedCode */
+        $this->processForm($request, $form);
+
+        if (!$form->isValid()) {
+            $errors = $this->getErrorsFromForm($form);
+
+            return $this->createValidationErrorResponse($errors);
+        }
 
         try {
             $this->em->persist($item);
             $this->em->flush();
         } catch (ORMException $e) {
+            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
+
+            throw new ApiProblemException($problem);
         }
 
         $redirectUrl = $this->generateUrl('api_get_item', ['slug' => $item->getSlug()]);
@@ -79,10 +99,17 @@ class ItemController extends AbstractController
     public function delete(string $slug)
     {
         try {
-            $result = $this->itemRepository->findOneBySlug($slug);
-            $this->em->remove($result);
+            $item = $this->itemRepository->findOneBySlug($slug);
+            $this->em->remove($item);
             $this->em->flush();
         } catch (ORMException $e) {
+            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
+
+            throw new ApiProblemException($problem);
+        }
+
+        if ($item === null) {
+            throw new NotFoundHttpException(sprintf('Item with slug %s was not found', $slug));
         }
 
         return $this->createApiResponse(null, 204);
@@ -90,12 +117,18 @@ class ItemController extends AbstractController
 
     /**
      * @Route("/api/items", methods={"GET"}, name="api_get_items")
+     * @param Request $request
+     * @param PaginatedCollectionFactory $factory
+     * @return Response
      */
-    public function getAll()
+    public function getAll(Request $request, PaginatedCollectionFactory $factory)
     {
-        $items = $this->itemRepository->findAll();
+        $page = $request->query->get('page', 1);
+        $qb = $this->itemRepository->findAllQueryBuilder();
+        $qbCount = $this->itemRepository->getCountQueryBuilder();
+        $collection = $factory->createCollection($qb, $qbCount,'api_get_items', [], $page, 10);
 
-        return $this->createApiResponse(['items' => $items], 200);
+        return $this->createApiResponse($collection, 200);
     }
 
     /**
@@ -110,6 +143,13 @@ class ItemController extends AbstractController
         try {
             $item = $this->itemRepository->findOneBySlug($slug);
         } catch (ORMException $e) {
+            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
+
+            throw new ApiProblemException($problem);
+        }
+
+        if ($item === null) {
+            throw new NotFoundHttpException(sprintf('Item with slug %s was not found', $slug));
         }
 
         return $this->createApiResponse($item, 200);

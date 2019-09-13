@@ -133,6 +133,12 @@ EOF;
         $this->asserter()->assertResponsePropertyEquals($response, 'detail', 'Tag with slug test was not found');
     }
 
+    public function testTagCreatingRequiresAuthentication()
+    {
+        $response = $this->createTag('requires authentication');
+        $this->assertEquals(401, $response->getStatusCode());
+    }
+
     /**
      * @param string $name
      * @throws TransportExceptionInterface

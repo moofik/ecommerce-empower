@@ -10,10 +10,10 @@ use App\Service\Api\FormHandlerTrait;
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
 use App\Service\Pagination\PaginatedCollectionFactory;
-use App\Service\Pagination\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JMS\Serializer\SerializerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,6 +58,7 @@ class TagController extends AbstractController
 
     /**
      * @Route("/api/tag", methods={"POST"}, name="api_create_tag")
+     * @IsGranted({"ROLE_ADMIN"})
      *
      * @param Request $request
      *
