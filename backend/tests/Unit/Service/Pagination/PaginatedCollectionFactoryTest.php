@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Unit\Service\Pagination;
-
 
 use App\Service\Pagination\PaginatedCollection;
 use App\Service\Pagination\PaginatedCollectionFactory;
@@ -93,6 +91,4 @@ class PaginatedCollectionFactoryTest extends TestCase
         $this->assertEquals([['name' => 'John Holland'], ['name' => 'Jack Donoghue']], $items);
         $this->assertEquals(2, $total);
     }
-
-
 }

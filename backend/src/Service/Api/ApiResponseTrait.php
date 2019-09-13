@@ -25,6 +25,7 @@ trait ApiResponseTrait
         if (!$this->serializer instanceof SerializerInterface) {
             $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_SERIALIZATION_ERROR);
             $problem->set('details', 'Error occurred while creating API response. Given serializer is not instance of SerializerInterface.');
+
             throw new ApiProblemException($problem);
         }
 

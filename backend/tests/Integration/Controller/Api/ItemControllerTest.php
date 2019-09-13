@@ -1,8 +1,8 @@
-<?php /** @noinspection ALL */
+<?php
 
+/** @noinspection ALL */
 
 namespace App\Tests\Integration\Controller\Api;
-
 
 use App\Tests\Integration\ApiTestCase;
 
