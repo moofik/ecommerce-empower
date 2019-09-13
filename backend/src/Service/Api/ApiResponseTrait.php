@@ -23,7 +23,10 @@ trait ApiResponseTrait
     public function createApiResponse($data, int $statusCode, array $headers = []): Response
     {
         if (!$this->serializer instanceof SerializerInterface) {
-            throw new ApiProblemException(500);
+            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_SERIALIZATION_ERROR);
+            $problem->set('details', 'Error occurred while creating API response. Given serializer is not instance of SerializerInterface.');
+
+            throw new ApiProblemException($problem);
         }
 
         $headers = array_merge($headers, ['Content-Type' => 'application/json']);

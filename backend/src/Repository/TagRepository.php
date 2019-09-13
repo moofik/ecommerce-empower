@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Tag|null find($id, $lockMode = null, $lockVersion = null)
@@ -18,23 +19,6 @@ class TagRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Tag::class);
     }
-
-    // /**
-    //  * @return Tag[] Returns an array of Tag objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
 
     /**
      * @param string $value
@@ -50,5 +34,22 @@ class TagRepository extends ServiceEntityRepository
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function findAllQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('tag');
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function getCountQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('tag')
+            ->select('COUNT(tag.id)');
     }
 }

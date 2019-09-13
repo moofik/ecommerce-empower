@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Item;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Item|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,35 +20,6 @@ class ItemRepository extends ServiceEntityRepository
         parent::__construct($registry, Item::class);
     }
 
-    // /**
-    //  * @return Item[] Returns an array of Item objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('i.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Item
-    {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
-
     /**
      * @param string $value
      *
@@ -57,10 +29,27 @@ class ItemRepository extends ServiceEntityRepository
      */
     public function findOneBySlug(string $value): ?Item
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.slug = :val')
+        return $this->createQueryBuilder('item')
+            ->andWhere('item.slug = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function findAllQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('item');
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    public function getCountQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('item')
+            ->select('COUNT(item.id)');
     }
 }

@@ -9,9 +9,11 @@ use App\Service\Api\ApiResponseTrait;
 use App\Service\Api\FormHandlerTrait;
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
+use App\Service\Pagination\PaginatedCollectionFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JMS\Serializer\SerializerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -56,6 +58,7 @@ class TagController extends AbstractController
 
     /**
      * @Route("/api/tag", methods={"POST"}, name="api_create_tag")
+     * @IsGranted({"ROLE_ADMIN"})
      *
      * @param Request $request
      *
@@ -115,12 +118,20 @@ class TagController extends AbstractController
 
     /**
      * @Route("/api/tags", methods={"GET"}, name="api_get_tags")
+     *
+     * @param Request                    $request
+     * @param PaginatedCollectionFactory $factory
+     *
+     * @return Response
      */
-    public function getAll()
+    public function getAll(Request $request, PaginatedCollectionFactory $factory)
     {
-        $tags = $this->tagRepository->findAll();
+        $page = $request->query->get('page', 1);
+        $qb = $this->tagRepository->findAllQueryBuilder();
+        $qbCount = $this->tagRepository->getCountQueryBuilder();
+        $collection = $factory->createCollection($qb, $qbCount, 'api_get_tags', [], $page, 10);
 
-        return $this->createApiResponse(['items' => $tags], 200);
+        return $this->createApiResponse($collection, 200);
     }
 
     /**
