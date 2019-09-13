@@ -44,7 +44,7 @@ class ItemController extends AbstractController
     /**
      * ItemController constructor.
      *
-     * @param ItemRepository          $itemRepository
+     * @param ItemRepository         $itemRepository
      * @param EntityManagerInterface $em
      * @param SerializerInterface    $serializer
      */
@@ -66,7 +66,7 @@ class ItemController extends AbstractController
     {
         $item = new Item();
         $form = $this->createForm(ItemType::class, $item);
-        /** @noinspection DuplicatedCode */
+        /* @noinspection DuplicatedCode */
         $this->processForm($request, $form);
 
         if (!$form->isValid()) {
@@ -117,8 +117,10 @@ class ItemController extends AbstractController
 
     /**
      * @Route("/api/items", methods={"GET"}, name="api_get_items")
-     * @param Request $request
+     *
+     * @param Request                    $request
      * @param PaginatedCollectionFactory $factory
+     *
      * @return Response
      */
     public function getAll(Request $request, PaginatedCollectionFactory $factory)
@@ -126,7 +128,7 @@ class ItemController extends AbstractController
         $page = $request->query->get('page', 1);
         $qb = $this->itemRepository->findAllQueryBuilder();
         $qbCount = $this->itemRepository->getCountQueryBuilder();
-        $collection = $factory->createCollection($qb, $qbCount,'api_get_items', [], $page, 10);
+        $collection = $factory->createCollection($qb, $qbCount, 'api_get_items', [], $page, 10);
 
         return $this->createApiResponse($collection, 200);
     }

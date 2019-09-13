@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Pagination;
-
 
 use App\Service\Pagination\Pagerfanta\Adapter\NonIterableDoctrineORMAdapter;
 use Doctrine\ORM\QueryBuilder;
@@ -18,6 +16,7 @@ class PaginatedCollectionFactory
 
     /**
      * PaginatedCollectionFactory constructor.
+     *
      * @param RouterInterface $router
      */
     public function __construct(RouterInterface $router)
@@ -32,8 +31,7 @@ class PaginatedCollectionFactory
         array $params = [],
         int $currentPage = 1,
         int $maxPerPage = 10
-    ): PaginatedCollection
-    {
+    ): PaginatedCollection {
         $adapter = new NonIterableDoctrineORMAdapter($queryBuilder, $countQueryBuilder);
         $pagerfanta = new Pagerfanta($adapter);
         $pagerfanta->setMaxPerPage($maxPerPage);
@@ -64,8 +62,9 @@ class PaginatedCollectionFactory
 
     /**
      * @param string $route
-     * @param array $params
-     * @param int $targetPage
+     * @param array  $params
+     * @param int    $targetPage
+     *
      * @return string
      */
     private function createLinkUrl(string $route, array $params, int $targetPage): string

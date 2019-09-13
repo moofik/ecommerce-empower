@@ -1,8 +1,8 @@
-<?php /** @noinspection ALL */
+<?php
 
+/** @noinspection ALL */
 
 namespace App\Tests\Integration\Controller\Api;
-
 
 use App\Service\Api\Problem\ApiProblem;
 use App\Tests\Integration\ApiTestCase;
@@ -15,16 +15,16 @@ class TagControllerTest extends ApiTestCase
     {
         $this->createTags('tag', 0, 25);
 
-        $response = $this->staticClient->request("GET", '/api/tags');
+        $response = $this->staticClient->request('GET', '/api/tags');
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
         $this->asserter()->assertResponsePropertyEquals($response, 'count', 10);
         $this->asserter()->assertResponsePropertyEquals($response, 'total', 25);
-        $this->asserter()->assertResponsePropertyEquals($response,'items[0].name', 'tag0');
-        $this->asserter()->assertResponsePropertyEquals($response,'items[1].name', 'tag1');
-        $this->asserter()->assertResponsePropertyEquals($response,'items[2].name', 'tag2');
-        $this->asserter()->assertResponsePropertyExists($response,'_links.next');
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[0].name', 'tag0');
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[1].name', 'tag1');
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[2].name', 'tag2');
+        $this->asserter()->assertResponsePropertyExists($response, '_links.next');
         $this->asserter()->assertResponsePropertyDoesNotExist($response, '_links.prev');
 
         $nextUrl = $this->asserter()->readResponseProperty($response, '_links.next');
@@ -32,7 +32,7 @@ class TagControllerTest extends ApiTestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
         $this->asserter()->assertResponsePropertyEquals($response, 'count', 10);
-        $this->asserter()->assertResponsePropertyEquals($response,'items[0].name', 'tag10');
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[0].name', 'tag10');
         $this->asserter()->assertResponsePropertyExists($response, '_links.next');
         $this->asserter()->assertResponsePropertyExists($response, '_links.prev');
 
@@ -41,7 +41,7 @@ class TagControllerTest extends ApiTestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
         $this->asserter()->assertResponsePropertyEquals($response, 'count', 5);
-        $this->asserter()->assertResponsePropertyEquals($response,'items[4].name', 'tag24');
+        $this->asserter()->assertResponsePropertyEquals($response, 'items[4].name', 'tag24');
         $this->asserter()->assertResponsePropertyExists($response, '_links.prev');
         $this->asserter()->assertResponsePropertyDoesNotExist($response, '_links.next');
         $this->asserter()->assertResponsePropertyDoesNotExist($response, 'items[5].name');
@@ -105,7 +105,7 @@ class TagControllerTest extends ApiTestCase
 
     public function testCreateWithInvalidJson()
     {
-        $content = <<<EOF
+        $content = <<<'EOF'
 {
     "name": "milk
 }
@@ -141,12 +141,14 @@ EOF;
 
     /**
      * @param string $name
+     *
      * @throws TransportExceptionInterface
+     *
      * @return Response
      */
     private function createTag(string $name): Response
     {
-        return $this->staticClient->jsonRequest("POST", '/api/tag', ['name' => $name]);
+        return $this->staticClient->jsonRequest('POST', '/api/tag', ['name' => $name]);
     }
 
     private function createTags(string $name, int $from, int $to)

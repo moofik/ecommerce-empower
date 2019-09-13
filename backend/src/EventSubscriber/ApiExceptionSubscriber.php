@@ -24,7 +24,8 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
 
     /**
      * ApiExceptionSubscriber constructor.
-     * @param bool $debug
+     *
+     * @param bool   $debug
      * @param string $errorsDocsUri
      */
     public function __construct(bool $debug, string $errorsDocsUri)
@@ -74,7 +75,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
         $data = $apiProblem->toArray();
 
         if ('about:blank' !== $data['type']) {
-            $data['type'] = $this->errorsDocsUri . $data['type'];
+            $data['type'] = $this->errorsDocsUri.$data['type'];
         }
 
         $response = new JsonResponse($data, $apiProblem->getStatusCode());

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Pagination;
-
 
 class PaginatedCollection
 {
@@ -28,8 +26,9 @@ class PaginatedCollection
 
     /**
      * PaginatedCollection constructor.
+     *
      * @param array $items
-     * @param int $total
+     * @param int   $total
      */
     public function __construct(array $items, int $total)
     {
