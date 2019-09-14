@@ -11,11 +11,34 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class TagControllerTest extends ApiTestCase
 {
+    /**
+     * @var array
+     */
+    private $adminAuthHeaders;
+
+    /**
+     * @var array
+     */
+    private $userAuthHeaders;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        if (!$this->adminAuthHeaders) {
+            $this->adminAuthHeaders = $this->getValidAuthenticationHeaders('admin', 'admin', ['ROLE_ADMIN']);
+        }
+
+        if (!$this->userAuthHeaders) {
+            $this->userAuthHeaders = $this->getValidAuthenticationHeaders('user', 'user');
+        }
+    }
+
     public function testGetAllTags()
     {
         $this->createTags('tag', 0, 25);
 
-        $response = $this->staticClient->request('GET', '/api/tags');
+        $response = $this->staticClient->request('GET', '/api/tags', [], [], $this->userAuthHeaders);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
@@ -28,7 +51,7 @@ class TagControllerTest extends ApiTestCase
         $this->asserter()->assertResponsePropertyDoesNotExist($response, '_links.prev');
 
         $nextUrl = $this->asserter()->readResponseProperty($response, '_links.next');
-        $response = $this->staticClient->request('GET', $nextUrl);
+        $response = $this->staticClient->request('GET', $nextUrl, [], [], $this->userAuthHeaders);
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
         $this->asserter()->assertResponsePropertyEquals($response, 'count', 10);
@@ -37,7 +60,7 @@ class TagControllerTest extends ApiTestCase
         $this->asserter()->assertResponsePropertyExists($response, '_links.prev');
 
         $lastUrl = $this->asserter()->readResponseProperty($response, '_links.last');
-        $response = $this->staticClient->request('GET', $lastUrl);
+        $response = $this->staticClient->request('GET', $lastUrl, [], [], $this->userAuthHeaders);
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyIsArray($response, 'items');
         $this->asserter()->assertResponsePropertyEquals($response, 'count', 5);
@@ -54,7 +77,7 @@ class TagControllerTest extends ApiTestCase
         $this->assertEquals(201, $response->getStatusCode());
         $this->assertEquals('/api/tag/milk', $response->headers->get('Location'));
 
-        $response = $this->staticClient->request('GET', '/api/tag/milk');
+        $response = $this->staticClient->request('GET', '/api/tag/milk', [], [], $this->userAuthHeaders);
         $this->asserter()->assertResponsePropertyEquals($response, 'name', 'milk');
         $this->asserter()->assertResponsePropertyEquals($response, 'slug', 'milk');
     }
@@ -69,11 +92,11 @@ class TagControllerTest extends ApiTestCase
         $this->assertEquals(201, $response_2->getStatusCode());
         $this->assertEquals('/api/tag/milk-1', $response_2->headers->get('Location'));
 
-        $response = $this->staticClient->request('GET', '/api/tag/milk');
+        $response = $this->staticClient->request('GET', '/api/tag/milk', [], [], $this->userAuthHeaders);
         $this->asserter()->assertResponsePropertyEquals($response, 'name', 'milk');
         $this->asserter()->assertResponsePropertyEquals($response, 'slug', 'milk');
 
-        $response = $this->staticClient->request('GET', '/api/tag/milk-1');
+        $response = $this->staticClient->request('GET', '/api/tag/milk-1', [], [], $this->userAuthHeaders);
         $this->asserter()->assertResponsePropertyEquals($response, 'name', 'milk');
         $this->asserter()->assertResponsePropertyEquals($response, 'slug', 'milk-1');
     }
@@ -81,11 +104,21 @@ class TagControllerTest extends ApiTestCase
     public function testDeleteTag()
     {
         $response_1 = $this->createTag('milk');
-        $response_2 = $this->staticClient->request('DELETE', '/api/tag/milk');
-        $response_3 = $this->staticClient->request('GET', '/api/tag/milk');
+        $response_2 = $this->staticClient->request('DELETE', '/api/tag/milk', [], [], $this->adminAuthHeaders);
+        $response_3 = $this->staticClient->request('GET', '/api/tag/milk', [], [], $this->userAuthHeaders);
 
         $this->assertEquals(204, $response_2->getStatusCode());
         $this->assertEquals(404, $response_3->getStatusCode());
+    }
+
+    public function testDeleteTagIsAllowedOnlyForAdminUsers()
+    {
+        $response_1 = $this->createTag('milk');
+        $response_2 = $this->staticClient->request('DELETE', '/api/tag/milk', [], [], $this->userAuthHeaders);
+        $response_3 = $this->staticClient->request('DELETE', '/api/tag/milk');
+
+        $this->assertEquals(403, $response_2->getStatusCode());
+        $this->assertEquals(401, $response_3->getStatusCode());
     }
 
     public function testTagValidationErrors()
@@ -111,7 +144,7 @@ class TagControllerTest extends ApiTestCase
 }
 EOF;
 
-        $response = $this->staticClient->request('POST', '/api/tag', [], [], [], $content);
+        $response = $this->staticClient->request('POST', '/api/tag', [], [], $this->adminAuthHeaders, $content);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals('application/problem+json', $response->headers->get('Content-Type'));
@@ -124,7 +157,7 @@ EOF;
 
     public function testGetNonExistantTag()
     {
-        $response = $this->staticClient->request('GET', '/api/tag/test');
+        $response = $this->staticClient->request('GET', '/api/tag/test', [], [], $this->userAuthHeaders);
 
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertEquals('application/problem+json', $response->headers->get('Content-Type'));
@@ -133,10 +166,13 @@ EOF;
         $this->asserter()->assertResponsePropertyEquals($response, 'detail', 'Tag with slug test was not found');
     }
 
-    public function testTagCreatingRequiresAuthentication()
+    public function testTagCreatingRequiresAuthenticationAndAdminRole()
     {
-        $response = $this->createTag('requires authentication');
+        $response = $this->staticClient->jsonRequest('POST', '/api/tag', ['name' => 'test']);
         $this->assertEquals(401, $response->getStatusCode());
+
+        $response = $this->staticClient->jsonRequest('POST', '/api/tag', ['name' => 'test'], $this->userAuthHeaders);
+        $this->assertEquals(403, $response->getStatusCode());
     }
 
     /**
@@ -148,7 +184,7 @@ EOF;
      */
     private function createTag(string $name): Response
     {
-        return $this->staticClient->jsonRequest('POST', '/api/tag', ['name' => $name]);
+        return $this->staticClient->jsonRequest('POST', '/api/tag', ['name' => $name], $this->adminAuthHeaders);
     }
 
     private function createTags(string $name, int $from, int $to)

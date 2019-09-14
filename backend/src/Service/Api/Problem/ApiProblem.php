@@ -9,7 +9,7 @@ class ApiProblem
     public const TYPE_VALIDATION_ERROR = 'validation_error';
     public const TYPE_INVALID_REQUEST_BODY_FORMAT = 'invalid_request_body_format';
     public const TYPE_SERVER_DATABASE_ERROR = 'server_database_error';
-    public const TYPE_SERVER_SERIALIZATION_ERROR = 'servier_serialization_error';
+    public const TYPE_SERVER_SERIALIZATION_ERROR = 'server_serialization_error';
 
     private const ERROR_TITLES = [
         self::TYPE_VALIDATION_ERROR            => 'There is a validation error',

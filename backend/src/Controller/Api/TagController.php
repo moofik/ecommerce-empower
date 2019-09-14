@@ -92,6 +92,7 @@ class TagController extends AbstractController
 
     /**
      * @Route("/api/tag/{slug}", methods={"DELETE"}, name="api_delete_tag")
+     * @IsGranted({"ROLE_ADMIN"})
      *
      * @param string $slug
      *
