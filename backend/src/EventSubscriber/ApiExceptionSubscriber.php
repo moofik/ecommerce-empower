@@ -28,7 +28,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
      * ApiExceptionSubscriber constructor.
      *
      * @param ResponseFactory $responseFactory
-     * @param bool $debug
+     * @param bool            $debug
      */
     public function __construct(ResponseFactory $responseFactory, bool $debug)
     {
@@ -42,8 +42,8 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::EXCEPTION => 'onKernelException',
-            Events::AUTHENTICATION_FAILURE => 'onAuthenticationFailure'
+            KernelEvents::EXCEPTION        => 'onKernelException',
+            Events::AUTHENTICATION_FAILURE => 'onAuthenticationFailure',
         ];
     }
 

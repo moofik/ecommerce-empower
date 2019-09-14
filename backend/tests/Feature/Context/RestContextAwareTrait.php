@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Feature\Context;
-
 
 use Behat\Behat\Context\Environment\InitializedContextEnvironment;
 use Behat\Behat\Context\Exception\ContextNotFoundException;
@@ -18,6 +16,7 @@ trait RestContextAwareTrait
 
     /**
      * @BeforeScenario
+     *
      * @param BeforeScenarioScope $scope
      */
     public function gatherRestContext(BeforeScenarioScope $scope)
@@ -26,7 +25,7 @@ trait RestContextAwareTrait
         $environment = $scope->getEnvironment();
 
         try {
-            /** @var RestContext restContext */
+            /* @var RestContext restContext */
             $this->restContext = $environment->getContext(RestContext::class);
         } catch (ContextNotFoundException $exception) {
             throw new \RuntimeException('You should add '.RestContext::class.' to your test suite.');
@@ -35,6 +34,7 @@ trait RestContextAwareTrait
 
     /**
      * @Given I set request header :name to :value
+     *
      * @param string $name
      * @param string $value
      */

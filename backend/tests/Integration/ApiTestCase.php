@@ -112,7 +112,8 @@ class ApiTestCase extends WebTestCase
     /**
      * @param string $name
      * @param string $password
-     * @param array $roles
+     * @param array  $roles
+     *
      * @return User
      */
     protected function createUser(string $name, string $password, array $roles = []): User
@@ -133,7 +134,8 @@ class ApiTestCase extends WebTestCase
     /**
      * @param string $username
      * @param string $password
-     * @param array $roles
+     * @param array  $roles
+     *
      * @return array
      */
     protected function getValidAuthenticationHeaders(string $username = 'test', string $password = 'test', array $roles = []): array
@@ -146,9 +148,9 @@ class ApiTestCase extends WebTestCase
 
         $token = $jwtTokenManager->create($user);
 
-        $headers =  [
+        $headers = [
             'HTTP_AUTHORIZATION' => 'Bearer '.$token,
-            'CONTENT_TYPE' => 'application/json',
+            'CONTENT_TYPE'       => 'application/json',
         ];
 
         return $headers;

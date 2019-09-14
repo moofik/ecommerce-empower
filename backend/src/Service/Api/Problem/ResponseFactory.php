@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Api\Problem;
-
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -15,6 +13,7 @@ class ResponseFactory
 
     /**
      * ResponseFactory constructor.
+     *
      * @param string $errorsDocsUri
      */
     public function __construct(string $errorsDocsUri)
@@ -24,6 +23,7 @@ class ResponseFactory
 
     /**
      * @param ApiProblem $apiProblem
+     *
      * @return JsonResponse
      */
     public function create(ApiProblem $apiProblem): JsonResponse
