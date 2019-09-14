@@ -6,13 +6,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="users")
  */
-class User
+class User implements UserInterface
 {
     use TimestampableEntity;
 
@@ -88,9 +90,15 @@ class User
      */
     private $items;
 
+    /**
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
+
     public function __construct()
     {
         $this->items = new ArrayCollection();
+        $this->uuid = Uuid::uuid4();
     }
 
     public function getId(): ?int
@@ -271,5 +279,40 @@ class User
         }
 
         return $this;
+    }
+
+    /**
+     * @param array $roles
+     *
+     * @return User
+     */
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     *
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function getSalt()
+    {
+        return '';
+    }
+
+    public function eraseCredentials()
+    {
     }
 }

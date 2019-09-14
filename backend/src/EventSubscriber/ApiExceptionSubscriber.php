@@ -4,8 +4,10 @@ namespace App\EventSubscriber;
 
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
+use App\Service\Api\Problem\ResponseFactory;
+use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationFailureEvent;
+use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -18,20 +20,20 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
     private $debug;
 
     /**
-     * @var string
+     * @var ResponseFactory
      */
-    private $errorsDocsUri;
+    private $responseFactory;
 
     /**
      * ApiExceptionSubscriber constructor.
      *
-     * @param bool   $debug
-     * @param string $errorsDocsUri
+     * @param ResponseFactory $responseFactory
+     * @param bool $debug
      */
-    public function __construct(bool $debug, string $errorsDocsUri)
+    public function __construct(ResponseFactory $responseFactory, bool $debug)
     {
         $this->debug = $debug;
-        $this->errorsDocsUri = $errorsDocsUri;
+        $this->responseFactory = $responseFactory;
     }
 
     /**
@@ -41,6 +43,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
     {
         return [
             KernelEvents::EXCEPTION => 'onKernelException',
+            Events::AUTHENTICATION_FAILURE => 'onAuthenticationFailure'
         ];
     }
 
@@ -72,14 +75,20 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
             }
         }
 
-        $data = $apiProblem->toArray();
-
-        if ('about:blank' !== $data['type']) {
-            $data['type'] = $this->errorsDocsUri.$data['type'];
-        }
-
-        $response = new JsonResponse($data, $apiProblem->getStatusCode());
-        $response->headers->set('Content-Type', 'application/problem+json');
+        $response = $this->responseFactory->create($apiProblem);
         $exceptionEvent->setResponse($response);
+    }
+
+    /**
+     * @param AuthenticationFailureEvent $event
+     */
+    public function onAuthenticationFailure(AuthenticationFailureEvent $event)
+    {
+        $apiProblem = new ApiProblem($event->getResponse()->getStatusCode());
+        $message = $event->getException() ? $event->getException()->getMessage() : 'Missing credentials';
+        $apiProblem->set('detail', $message);
+
+        $response = $this->responseFactory->create($apiProblem);
+        $event->setResponse($response);
     }
 }

@@ -2,9 +2,12 @@
 
 namespace App\Tests\Integration;
 
+use App\Entity\User;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ApiTestCase extends WebTestCase
 {
@@ -94,5 +97,60 @@ class ApiTestCase extends WebTestCase
             ->getContainer()
             ->get('doctrine')
             ->getManager();
+    }
+
+    /**
+     * @return UserPasswordEncoderInterface
+     */
+    protected function getUsernamePasswordEncoder(): UserPasswordEncoderInterface
+    {
+        return self::$kernel
+            ->getContainer()
+            ->get('security.password_encoder');
+    }
+
+    /**
+     * @param string $name
+     * @param string $password
+     * @param array $roles
+     * @return User
+     */
+    protected function createUser(string $name, string $password, array $roles = []): User
+    {
+        $user = new User();
+        $user->setUsername($name);
+        $user->setPassword($this->getUsernamePasswordEncoder()->encodePassword($user, $password));
+        $user->setEmail('test@colloseum.com');
+        $user->setRoles($roles);
+
+        $em = $this->getEntityManager();
+        $em->persist($user);
+        $em->flush();
+
+        return $user;
+    }
+
+    /**
+     * @param string $username
+     * @param string $password
+     * @param array $roles
+     * @return array
+     */
+    protected function getValidAuthenticationHeaders(string $username = 'test', string $password = 'test', array $roles = []): array
+    {
+        $user = $this->createUser($username, $password, $roles);
+        /** @var JWTTokenManagerInterface $jwtTokenManager */
+        $jwtTokenManager = self::$kernel
+            ->getContainer()
+            ->get('lexik_jwt_authentication.jwt_manager');
+
+        $token = $jwtTokenManager->create($user);
+
+        $headers =  [
+            'HTTP_AUTHORIZATION' => 'Bearer '.$token,
+            'CONTENT_TYPE' => 'application/json',
+        ];
+
+        return $headers;
     }
 }

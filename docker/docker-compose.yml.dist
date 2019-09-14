@@ -28,7 +28,7 @@ services:
       XDEBUG_CONFIG: >
         idekey=PHPSTORM
         remote_enable=1
-        remote_host=172.18.0.1
+        remote_host=172.22.0.1
         remote_port=9000
         profiler_enable=0
         coverage_enable=0
@@ -51,7 +51,7 @@ services:
       XDEBUG_CONFIG: >
         idekey=PHPSTORM
         remote_enable=1
-        remote_host=172.18.0.1
+        remote_host=172.22.0.1
         remote_port=9000
         profiler_enable=0
         coverage_enable=0
@@ -79,8 +79,8 @@ services:
       - "./volumes/data/cache:/var/www/html/cache"
     networks:
       - master_home
-    depends_on:
-      - masterhome-rabbitmq
+#    depends_on:
+#      - masterhome-rabbitmq
 
   masterhome-node:
     build: build/node
@@ -113,38 +113,38 @@ services:
     networks:
      - master_home
 
-  masterhome-rabbitmq:
-    image: rabbitmq:3.7.8-management-alpine
-    hostname: masterhome-rabbitmq
-    restart: unless-stopped
-    environment:
-      RABBITMQ_DEFAULT_USER: admin
-      RABBITMQ_DEFAULT_PASS: y6zYmsTtg4fNM95U
-    ports:
-      - 5672:5672
-      - 15672:15672
-    volumes:
-      - ./volumes/rabbitmq:/var/lib/rabbitmq
-    networks:
-      - master_home
-
-  masterhome-socketio:
-    build: build/node-server
-    image: masterhome/node-socketio
-    restart: unless-stopped
-    environment:
-      RABBIT_MQ_HOST: masterhome-rabbitmq
-      RABBIT_MQ_PORT: 5672
-    entrypoint: "sh"
-    command: /startup.sh npm run dev
-    volumes:
-      - "../socket-server:/src"
-    ports:
-      - "127.0.0.1:3335:3335"
-    networks:
-      - master_home
-    depends_on:
-      - masterhome-rabbitmq
+#  masterhome-rabbitmq:
+#    image: rabbitmq:3.7.8-management-alpine
+#    hostname: masterhome-rabbitmq
+#    restart: unless-stopped
+#    environment:
+#      RABBITMQ_DEFAULT_USER: admin
+#      RABBITMQ_DEFAULT_PASS: y6zYmsTtg4fNM95U
+#    ports:
+#      - 5672:5672
+#      - 15672:15672
+#    volumes:
+#      - ./volumes/rabbitmq:/var/lib/rabbitmq
+#    networks:
+#      - master_home
+#
+#  masterhome-socketio:
+#    build: build/node-server
+#    image: masterhome/node-socketio
+#    restart: unless-stopped
+#    environment:
+#      RABBIT_MQ_HOST: masterhome-rabbitmq
+#      RABBIT_MQ_PORT: 5672
+#    entrypoint: "sh"
+#    command: /startup.sh npm run dev
+#    volumes:
+#      - "../socket-server:/src"
+#    ports:
+#      - "127.0.0.1:3335:3335"
+#    networks:
+#      - master_home
+#    depends_on:
+#      - masterhome-rabbitmq
 
 networks:
   master_home:
