@@ -2,7 +2,6 @@
 
 namespace App\Tests\Feature\Context;
 
-
 use App\Entity\User;
 use Behat\Behat\Context\Context;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,8 +34,9 @@ class AuthorizationContext implements Context
 
     /**
      * AuthorizationContext constructor.
-     * @param KernelInterface $kernel
-     * @param EntityManagerInterface $entityManager
+     *
+     * @param KernelInterface              $kernel
+     * @param EntityManagerInterface       $entityManager
      * @param UserPasswordEncoderInterface $encoder
      */
     public function __construct(KernelInterface $kernel, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder)
@@ -47,7 +47,7 @@ class AuthorizationContext implements Context
     }
 
     /**
-     * @var string $username
+     * @var string
      * @var string $password
      *
      * @Given there is an user with username :username and password :password

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Feature\Context;
-
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,7 +10,7 @@ trait DatabaseAwareContextTrait
     private $entityManager;
 
     /**
-     * Purges database
+     * Purges database.
      *
      * @BeforeScenario @purgeDatabase
      */
