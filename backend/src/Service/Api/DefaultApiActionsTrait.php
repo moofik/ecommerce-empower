@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Api;
-
 
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
@@ -17,8 +15,8 @@ trait DefaultApiActionsTrait
 
     /**
      * @param Request $request
-     * @param mixed $entity
-     * @param string $formTypeClass
+     * @param mixed   $entity
+     * @param string  $formTypeClass
      */
     public function fillEntityFromRequest(Request $request, $entity, string $formTypeClass)
     {
@@ -34,7 +32,7 @@ trait DefaultApiActionsTrait
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param mixed $entity
+     * @param mixed                  $entity
      */
     public function saveEntity(EntityManagerInterface $entityManager, $entity)
     {
