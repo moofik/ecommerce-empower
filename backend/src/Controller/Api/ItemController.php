@@ -5,8 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Item;
 use App\Form\ItemType;
 use App\Repository\ItemRepository;
-use App\Service\Api\ApiResponseTrait;
-use App\Service\Api\FormHandlerTrait;
+use App\Service\Api\DefaultApiActionsTrait;
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
 use App\Service\Pagination\PaginatedCollectionFactory;
@@ -24,7 +23,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ItemController extends AbstractController
 {
-    use ApiResponseTrait, FormHandlerTrait;
+    use DefaultApiActionsTrait;
 
     /**
      * @var ItemRepository
@@ -35,11 +34,6 @@ class ItemController extends AbstractController
      * @var EntityManagerInterface
      */
     private $em;
-
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
 
     /**
      * ItemController constructor.
@@ -65,24 +59,8 @@ class ItemController extends AbstractController
     public function create(Request $request): Response
     {
         $item = new Item();
-        $form = $this->createForm(ItemType::class, $item);
-        /* @noinspection DuplicatedCode */
-        $this->processForm($request, $form);
-
-        if (!$form->isValid()) {
-            $errors = $this->getErrorsFromForm($form);
-
-            return $this->createValidationErrorResponse($errors);
-        }
-
-        try {
-            $this->em->persist($item);
-            $this->em->flush();
-        } catch (ORMException $e) {
-            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
-
-            throw new ApiProblemException($problem);
-        }
+        $this->fillEntityFromRequest($request, $item, ItemType::class);
+        $this->saveEntity($this->em, $item);
 
         $redirectUrl = $this->generateUrl('api_get_item', ['slug' => $item->getSlug()]);
 
@@ -155,5 +133,13 @@ class ItemController extends AbstractController
         }
 
         return $this->createApiResponse($item, 200);
+    }
+
+    /**
+     * @return SerializerInterface
+     */
+    public function getSerializer(): SerializerInterface
+    {
+        return $this->serializer;
     }
 }
