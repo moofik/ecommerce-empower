@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Controller\Api;
-
 
 use App\Entity\User;
 use App\Form\UserType;
@@ -26,8 +24,9 @@ class RegistrationController extends AbstractController
 
     /**
      * RegistrationController constructor.
+     *
      * @param EntityManagerInterface $entityManager
-     * @param SerializerInterface $serializer
+     * @param SerializerInterface    $serializer
      */
     public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer)
     {
@@ -37,8 +36,10 @@ class RegistrationController extends AbstractController
 
     /**
      * @Route("/api/register", methods={"POST"})
-     * @param Request $request
+     *
+     * @param Request                      $request
      * @param UserPasswordEncoderInterface $encoder
+     *
      * @return Response
      */
     public function register(Request $request, UserPasswordEncoderInterface $encoder)
