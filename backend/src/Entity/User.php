@@ -9,6 +9,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -31,16 +32,19 @@ class User implements UserInterface
     private $uuid;
 
     /**
+     * @Assert\NotNull()
      * @ORM\Column(type="string", length=255, unique=true)
      */
     private $username;
 
     /**
+     * @Assert\NotNull()
      * @ORM\Column(type="string", length=255)
      */
     private $password;
 
     /**
+     * @Assert\NotNull()
      * @ORM\Column(type="string", length=255)
      */
     private $email;

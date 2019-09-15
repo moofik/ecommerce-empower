@@ -5,8 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Tag;
 use App\Form\TagType;
 use App\Repository\TagRepository;
-use App\Service\Api\ApiResponseTrait;
-use App\Service\Api\FormHandlerTrait;
+use App\Service\Api\DefaultApiActionsTrait;
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
 use App\Service\Pagination\PaginatedCollectionFactory;
@@ -25,7 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class TagController extends AbstractController
 {
-    use ApiResponseTrait, FormHandlerTrait;
+    use DefaultApiActionsTrait;
 
     /**
      * @var TagRepository
@@ -36,11 +35,6 @@ class TagController extends AbstractController
      * @var EntityManagerInterface
      */
     private $em;
-
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
 
     /**
      * TagController constructor.
@@ -67,23 +61,8 @@ class TagController extends AbstractController
     public function create(Request $request): Response
     {
         $tag = new Tag();
-        $form = $this->createForm(TagType::class, $tag);
-        $this->processForm($request, $form);
-
-        if (!$form->isValid()) {
-            $errors = $this->getErrorsFromForm($form);
-
-            return $this->createValidationErrorResponse($errors);
-        }
-
-        try {
-            $this->em->persist($tag);
-            $this->em->flush();
-        } catch (ORMException $e) {
-            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
-
-            throw new ApiProblemException($problem);
-        }
+        $this->fillEntityFromRequest($request, $tag, TagType::class);
+        $this->saveEntity($this->em, $tag);
 
         $redirectUrl = $this->generateUrl('api_get_tag', ['slug' => $tag->getSlug()]);
 
@@ -157,5 +136,13 @@ class TagController extends AbstractController
         }
 
         return $this->createApiResponse($tag, 200);
+    }
+
+    /**
+     * @return SerializerInterface
+     */
+    public function getSerializer(): SerializerInterface
+    {
+        return $this->serializer;
     }
 }
