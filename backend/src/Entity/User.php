@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use JMS\Serializer\Annotation as Serializer;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -14,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="users")
+ * @Serializer\ExclusionPolicy("all")
  */
 class User implements UserInterface
 {
@@ -34,6 +36,7 @@ class User implements UserInterface
     /**
      * @Assert\NotNull()
      * @ORM\Column(type="string", length=255, unique=true)
+     * @Serializer\Expose()
      */
     private $username;
 
@@ -90,19 +93,19 @@ class User implements UserInterface
     private $isEmailRestricted;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Item", mappedBy="user")
-     */
-    private $items;
-
-    /**
      * @ORM\Column(type="json")
      */
     private $roles = [];
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Shop", mappedBy="user")
+     */
+    private $shops;
+
     public function __construct()
     {
-        $this->items = new ArrayCollection();
         $this->uuid = Uuid::uuid4();
+        $this->shops = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -255,37 +258,6 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|Item[]
-     */
-    public function getItems(): Collection
-    {
-        return $this->items;
-    }
-
-    public function addItem(Item $item): self
-    {
-        if (!$this->items->contains($item)) {
-            $this->items[] = $item;
-            $item->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeItem(Item $item): self
-    {
-        if ($this->items->contains($item)) {
-            $this->items->removeElement($item);
-            // set the owning side to null (unless already changed)
-            if ($item->getUser() === $this) {
-                $item->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @param array $roles
      *
      * @return User
@@ -318,5 +290,36 @@ class User implements UserInterface
 
     public function eraseCredentials()
     {
+    }
+
+    /**
+     * @return Collection|Shop[]
+     */
+    public function getShops(): Collection
+    {
+        return $this->shops;
+    }
+
+    public function addShop(Shop $shop): self
+    {
+        if (!$this->shops->contains($shop)) {
+            $this->shops[] = $shop;
+            $shop->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShop(Shop $shop): self
+    {
+        if ($this->shops->contains($shop)) {
+            $this->shops->removeElement($shop);
+            // set the owning side to null (unless already changed)
+            if ($shop->getUser() === $this) {
+                $shop->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Service\Api;
 
+use App\Serializer\Groups\GroupsResolver;
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
 use JMS\Serializer\SerializationContext;
@@ -25,6 +26,8 @@ trait ApiResponseTrait
 
         $context = new SerializationContext();
         $context->setSerializeNull(true);
+
+        $this->getGroupsResolver()->resolveGroups($context);
 
         return new Response(
             $this->getSerializer()->serialize($data, 'json', $context),
@@ -50,4 +53,9 @@ trait ApiResponseTrait
      * @return SerializerInterface
      */
     abstract public function getSerializer(): SerializerInterface;
+
+    /**
+     * @return GroupsResolver
+     */
+    abstract public function getGroupsResolver(): GroupsResolver;
 }

@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Serializer\Groups\GroupsResolver;
 use App\Service\Api\DefaultApiActionsTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerInterface;
@@ -21,17 +22,26 @@ class RegistrationController extends AbstractController
      * @var EntityManagerInterface
      */
     private $entityManager;
+    /**
+     * @var GroupsResolver
+     */
+    private $groupsResolver;
 
     /**
      * RegistrationController constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param SerializerInterface    $serializer
+     * @param SerializerInterface $serializer
+     * @param GroupsResolver $groupsResolver
      */
-    public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        SerializerInterface $serializer,
+        GroupsResolver $groupsResolver
+    ) {
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
+        $this->groupsResolver = $groupsResolver;
     }
 
     /**
@@ -58,5 +68,13 @@ class RegistrationController extends AbstractController
     public function getSerializer(): SerializerInterface
     {
         return $this->serializer;
+    }
+
+    /**
+     * @return GroupsResolver
+     */
+    public function getGroupsResolver(): GroupsResolver
+    {
+        return $this->groupsResolver;
     }
 }

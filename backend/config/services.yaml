@@ -41,7 +41,29 @@ services:
         class: App\Service\Api\Problem\ResponseFactory
         arguments: ['%api.links.error_docs%']
 
+    App\Serializer\Handler\UuidHandler:
+        public: false
+        class: App\Serializer\Handler\UuidHandler
+        tags:
+            - { name: jms_serializer.handler, type: Ramsey\Uuid\Uuid, format: json, direction: serialization, method: serializeUuidToJson }
+
+    App\Serializer\Groups\GroupsResolver:
+        public: false
+        class: App\Serializer\Groups\GroupsResolver
+        arguments:
+            $requestStack: '@request_stack'
+
+    App\Service\Shop\Maker\CreationStategy:
+        public: false
+        alias: '@App\Service\Shop\Maker\DefaultCreationStrategy'
+
+    App\Service\Shop\Maker\DefaultCreationStrategy: ~
+
     JMS\Serializer\SerializerInterface: '@jms_serializer'
+
+    app.request_matcher.requested:
+        public: true
+        class: App\Security\Matcher\RestrictedRequestMatcher
 
     gedmo.listener.timestampable:
         class: Gedmo\Timestampable\TimestampableListener

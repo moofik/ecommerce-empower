@@ -37,6 +37,22 @@ class TagRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param string $value
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @return Tag|null
+     */
+    public function findOneByName(string $value): ?Tag
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.name = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
      * @return QueryBuilder
      */
     public function findAllQueryBuilder(): QueryBuilder

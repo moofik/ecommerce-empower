@@ -82,6 +82,14 @@ class ApiTestCase extends WebTestCase
         return self::$asserter;
     }
 
+    /**
+     * @return ApiTestCaseDebugger
+     */
+    protected function debugger()
+    {
+        return self::$debugger;
+    }
+
     protected function purgeDatabase()
     {
         $purger = new ORMPurger($this->getEntityManager());

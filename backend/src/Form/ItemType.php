@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\Item;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,11 +17,11 @@ class ItemType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('description', TextType::class)
-            ->add('priceType', TextType::class, ['name' => 'price_type'])
-            ->add('priceMin', TextType::class, ['name' => 'price_min'])
-            ->add('priceMax', TextType::class, ['name' => 'price_max'])
-            ->add('isBargainPossible', TextType::class, ['name' => 'is_bargain_possible'])
-            ->add('isExchangePossible', TextType::class, ['name' => 'is_exchange_possible']);
+            ->add('priceType', TextType::class)
+            ->add('priceMin', NumberType::class)
+            ->add('priceMax', NumberType::class)
+            ->add('isBargainPossible', CheckboxType::class)
+            ->add('isExchangePossible', CheckboxType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -28,6 +30,7 @@ class ItemType extends AbstractType
             'data_class'      => Item::class,
             'is_edit'         => false,
             'csrf_protection' => false,
+            'allow_extra_fields' => true,
         ]);
     }
 }
