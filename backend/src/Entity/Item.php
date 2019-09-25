@@ -42,30 +42,35 @@ class Item
     /**
      * @ORM\Column(type="string", nullable=true)
      * @Serializer\Expose()
+     * @Serializer\SerializedName("priceType")
      */
     private $priceType;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Serializer\Expose()
+     * @Serializer\SerializedName("priceMin")
      */
     private $priceMin;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Serializer\Expose()
+     * @Serializer\SerializedName("priceMax")
      */
     private $priceMax;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Serializer\Expose()
+     * @Serializer\SerializedName("isBargainPossible")
      */
     private $isBargainPossible;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Serializer\Expose()
+     * @Serializer\SerializedName("isExchangePossible")
      */
     private $isExchangePossible;
 

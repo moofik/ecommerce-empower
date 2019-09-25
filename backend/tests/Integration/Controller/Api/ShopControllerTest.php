@@ -56,13 +56,22 @@ class ShopControllerTest extends ApiTestCase
 
     public function testGetShopForNonAuthorizedUser()
     {
-        // @TODO исправить
         $response = $this->staticClient->jsonRequest('POST', '/api/shops', [], $this->userAuthHeaders);
         $shopUrl = $response->headers->get('Location');
         $response = $this->staticClient->request('GET', $shopUrl);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyEquals($response, 'name', 'user');
+        $this->asserter()->assertResponsePropertyExists($response, 'description');
+    }
+
+    public function testGetShopWithGroups()
+    {
+        $response = $this->staticClient->jsonRequest('POST', '/api/shops', [], $this->userAuthHeaders);
+        $shopUrl = $response->headers->get('Location');
+        $response = $this->staticClient->request('GET', $shopUrl.'?groups=user');
+
+        $this->assertEquals(200, $response->getStatusCode());
         $this->asserter()->assertResponsePropertyEquals($response, 'user.username', 'user');
     }
 

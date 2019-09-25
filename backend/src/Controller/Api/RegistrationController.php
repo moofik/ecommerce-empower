@@ -22,6 +22,7 @@ class RegistrationController extends AbstractController
      * @var EntityManagerInterface
      */
     private $entityManager;
+
     /**
      * @var GroupsResolver
      */
@@ -57,6 +58,7 @@ class RegistrationController extends AbstractController
         $user = new User();
         $this->fillEntityFromRequest($request, $user, UserType::class);
         $user->setPassword($encoder->encodePassword($user, $request->get('password')));
+
         $this->saveEntity($this->entityManager, $user);
 
         return $this->createApiResponse($user, 201);

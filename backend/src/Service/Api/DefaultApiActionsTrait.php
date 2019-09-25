@@ -40,9 +40,21 @@ trait DefaultApiActionsTrait
             $entityManager->persist($entity);
             $entityManager->flush();
         } catch (ORMException $e) {
-            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
-
-            throw new ApiProblemException($problem);
+            $this->throwDatabaseApiException($e->getMessage());
         }
+    }
+
+    /**
+     * @param string|null $detail
+     */
+    public function throwDatabaseApiException(string $detail = null)
+    {
+        $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
+
+        if ($detail) {
+            $problem->set('detail', $detail);
+        }
+
+        throw new ApiProblemException($problem);
     }
 }

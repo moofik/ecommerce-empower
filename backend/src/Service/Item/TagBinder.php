@@ -41,8 +41,6 @@ class TagBinder
         if ($tag = $this->repository->findOneByName($tagName)) {
             $item->addTag($tag);
         }
-
-        $this->entityManager->flush();
     }
 
     /**
@@ -57,7 +55,20 @@ class TagBinder
                 $item->addTag($tag);
             }
         }
+    }
 
-        $this->entityManager->flush();
+    /**
+     * @param Item $item
+     */
+    public function unbindAllTags(Item $item)
+    {
+        $builder = $this->entityManager
+            ->getConnection()
+            ->createQueryBuilder()
+            ->delete('tag_item')
+            ->where('item_id = :id')
+            ->setParameter('id', $item->getId());
+
+        $builder->execute();
     }
 }

@@ -4,19 +4,18 @@ namespace App\Controller\Api;
 
 use App\Entity\Item;
 use App\Entity\Shop;
-use App\Entity\User;
 use App\Form\ItemType;
 use App\Repository\ItemRepository;
 use App\Repository\ShopRepository;
 use App\Serializer\Groups\GroupsResolver;
 use App\Service\Api\DefaultApiActionsTrait;
-use App\Service\Api\Problem\ApiProblem;
-use App\Service\Api\Problem\ApiProblemException;
 use App\Service\Item\TagBinder;
 use App\Service\Pagination\PaginatedCollectionFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\ORMException;
 use JMS\Serializer\SerializerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -74,62 +73,55 @@ class ShopItemController extends AbstractController
     }
 
     /**
-     * @Route("/api/shops/{shopId}/items", methods={"POST"}, name="api_create_item")
+     * @Route("/api/shops/{shop}/items", methods={"POST"}, name="api_create_item")
+     * @IsGranted("SHOP_MANAGE", subject="shop")
      *
-     * @param int $shopId
+     * @param Shop $shop
      * @param Request $request
      * @param TagBinder $binder
      *
-     * @param ShopRepository $shopRepository
      * @return Response
      * @throws ORMException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function create(int $shopId, Request $request, TagBinder $binder, ShopRepository $shopRepository): Response
+    public function create(Shop $shop, Request $request, TagBinder $binder): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        $shop = $shopRepository->find($shopId);
-
-        if ($shop->getUser()->getId() !== $user->getId()) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'User tried to access a page without having ROLE_ADMIN');
-        }
-
         $item = new Item();
         $this->fillEntityFromRequest($request, $item, ItemType::class);
         $item->setShop($shop);
-        $binder->bindTags($item, $request->get('tags', []));
 
-        $this->saveEntity($this->em, $item);
+        $this->em->persist($item);
+        $binder->bindTags($item, $request->get('tags'));
 
-        $redirectUrl = $this->generateUrl('api_get_item', ['shopId' => $shopId, 'slug' => $item->getSlug()]);
+        $this->em->flush();
+
+        $redirectUrl = $this->generateUrl('api_get_item', ['shopId' => $shop->getId(), 'slug' => $item->getSlug()]);
 
         return $this->createApiResponse($item, 201, ['Location' => $redirectUrl]);
     }
 
     /**
-     * @Route("/api/shops/{shopId}/items/{slug}", methods={"DELETE"}, name="api_delete_item")
+     * @Route("/api/shops/{shop}/items/{slug}", methods={"DELETE"}, name="api_delete_item")
+     * @IsGranted("SHOP_MANAGE", subject="shop")
      *
-     * @param int $shopId
+     * @param Shop $shop
      * @param string $slug
      *
      * @return Response
      */
-    public function delete(int $shopId, string $slug)
+    public function delete(Shop $shop, string $slug)
     {
         try {
-            $item = $this->itemRepository->findOneByShopIdAndSlug($shopId, $slug);
+            $item = $this->itemRepository->findOneByShopIdAndSlug($shop->getId(), $slug);
 
             if ($item === null) {
-                throw new NotFoundHttpException(sprintf('Item with slug %s was not found in shop %s', $slug, $shopId));
+                throw new NotFoundHttpException(sprintf('Item with slug %s was not found in shop %s', $slug, $shop->getId()));
             }
 
             $this->em->remove($item);
             $this->em->flush();
         } catch (ORMException $e) {
-            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
-
-            throw new ApiProblemException($problem);
+            $this->throwDatabaseApiException($e->getMessage());
         }
 
         return $this->createApiResponse(null, 204);
@@ -153,9 +145,7 @@ class ShopItemController extends AbstractController
             /** @var Shop $shop */
             $shop = $this->em->getReference(Shop::class, $shopId);
         } catch (ORMException $exception) {
-            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
-
-            throw new ApiProblemException($problem);
+            $this->throwDatabaseApiException($exception->getMessage());
         }
 
         $qb = $this->itemRepository->getFindAllByShopQueryBuilder($shop);
@@ -178,14 +168,53 @@ class ShopItemController extends AbstractController
         try {
             $item = $this->itemRepository->findOneByShopIdAndSlug($shopId, $slug);
         } catch (ORMException $e) {
-            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
-
-            throw new ApiProblemException($problem);
+            $this->throwDatabaseApiException($e->getMessage());
         }
 
         if ($item === null) {
             throw new NotFoundHttpException(sprintf('Item with slug %s was not found', $slug));
         }
+
+        return $this->createApiResponse($item, 200);
+    }
+
+    /**
+     * @Route("/api/shops/{shop}/items/{slug}", methods={"PUT","PATCH"}, name="api_edit_item")
+     * @IsGranted("SHOP_MANAGE", subject="shop")
+     *
+     * @param Request $request
+     * @param TagBinder $tagBinder
+     * @param Shop $shop
+     * @param string $slug
+     *
+     * @return Response
+     */
+    public function edit(Request $request, TagBinder $tagBinder, Shop $shop, string $slug)
+    {
+        try {
+            $item = $this->itemRepository->findOneByShopIdAndSlug($shop->getId(), $slug);
+        } catch (ORMException $e) {
+            $this->throwDatabaseApiException($e->getMessage());
+        }
+
+        if ($item === null) {
+            throw new NotFoundHttpException(sprintf('Item with slug %s was not found', $slug));
+        }
+
+        $this->fillEntityFromRequest($request, $item, ItemType::class);
+        $tags = $request->get('tags');
+
+        if (!empty($tags)) {
+            $tagBinder->unbindAllTags($item);
+
+            try {
+                $tagBinder->bindTags($item, $tags);
+            } catch (NonUniqueResultException $exception) {
+                $this->throwDatabaseApiException($exception->getMessage());
+            }
+        }
+
+        $this->em->flush();
 
         return $this->createApiResponse($item, 200);
     }

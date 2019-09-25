@@ -9,16 +9,14 @@ use App\Entity\User;
 use App\Repository\ShopRepository;
 use App\Serializer\Groups\GroupsResolver;
 use App\Service\Api\DefaultApiActionsTrait;
-use App\Service\Api\Problem\ApiProblem;
-use App\Service\Api\Problem\ApiProblemException;
 use App\Service\Shop\Maker\ShopMaker;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -37,7 +35,7 @@ class ShopController extends AbstractController
     private $serializer;
 
     /**
-     * @var EntityManagerInterface
+     * @var ObjectManager
      */
     private $em;
 
@@ -80,7 +78,7 @@ class ShopController extends AbstractController
         $user = $this->getUser();
         $shop = $maker->create($user);
 
-        $this->saveEntity($this->em, $shop);
+        $this->saveEntity($this->getEntityManager(), $shop);
 
         $redirectUrl = $this->generateUrl('api_get_shop', ['shop' => $shop->getId()]);
 
@@ -101,7 +99,7 @@ class ShopController extends AbstractController
 
     /**
      * @Route("/api/shops/{shop}", methods={"DELETE"}, name="api_delete_shop")
-     * @IsGranted({"ROLE_USER", "ROLE_ADMIN"})
+     * @IsGranted("SHOP_MANAGE", subject="shop")
      *
      * @param Shop $shop
      * @param AuthorizationCheckerInterface $authorizationChecker
@@ -109,17 +107,11 @@ class ShopController extends AbstractController
      */
     public function deleteShop(Shop $shop, AuthorizationCheckerInterface $authorizationChecker): Response
     {
-        if ($shop->getUser() !== $this->getUser() && !$authorizationChecker->isGranted('ROLE_ADMIN')) {
-            throw new AccessDeniedHttpException();
-        }
-
         try {
             $this->em->remove($shop);
             $this->em->flush();
         } catch (ORMException $e) {
-            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
-
-            throw new ApiProblemException($problem);
+            $this->throwDatabaseApiException($e->getMessage());
         }
 
         return $this->createApiResponse(null, 204);
@@ -139,5 +131,14 @@ class ShopController extends AbstractController
     public function getGroupsResolver(): GroupsResolver
     {
         return $this->groupsResolver;
+    }
+
+    public function getEntityManager(): EntityManagerInterface
+    {
+        if (!$this->em->isOpen()) {
+            $this->em->clear();
+        }
+
+        return $this->em;
     }
 }

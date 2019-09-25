@@ -133,9 +133,7 @@ class TagController extends AbstractController
         try {
             $tag = $this->tagRepository->findOneBySlug($slug);
         } catch (ORMException $e) {
-            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
-
-            throw new ApiProblemException($problem);
+            $this->throwDatabaseApiException($e->getMessage());
         }
 
         if ($tag === null) {
