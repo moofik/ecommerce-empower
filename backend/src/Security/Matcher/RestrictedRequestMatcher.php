@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Security\Matcher;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -10,7 +9,7 @@ class RestrictedRequestMatcher implements RequestMatcherInterface
 {
     private const DEFAULT_IGNORE_LIST = [
         ['GET' => '/api/shops'],
-        ['GET' => '/api/register'],
+        ['GET'  => '/api/register'],
         ['POST' => '/api/register'],
     ];
 
@@ -21,6 +20,7 @@ class RestrictedRequestMatcher implements RequestMatcherInterface
 
     /**
      * RestrictedRequestMatcher constructor.
+     *
      * @param array $ignoreList
      */
     public function __construct(array $ignoreList = [])

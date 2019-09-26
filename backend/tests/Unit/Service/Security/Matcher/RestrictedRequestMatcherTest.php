@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Unit\Service\Security\Matcher;
-
 
 use App\Security\Matcher\RestrictedRequestMatcher;
 use PHPUnit\Framework\TestCase;

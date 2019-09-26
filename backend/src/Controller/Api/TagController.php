@@ -44,10 +44,10 @@ class TagController extends AbstractController
     /**
      * TagController constructor.
      *
-     * @param TagRepository $tagRepository
+     * @param TagRepository          $tagRepository
      * @param EntityManagerInterface $em
-     * @param SerializerInterface $serializer
-     * @param GroupsResolver $groupsResolver
+     * @param SerializerInterface    $serializer
+     * @param GroupsResolver         $groupsResolver
      */
     public function __construct(
         TagRepository $tagRepository,

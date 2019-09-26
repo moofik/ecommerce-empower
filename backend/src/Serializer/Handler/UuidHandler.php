@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Serializer\Handler;
-
 
 use JMS\Serializer\Context;
 use JMS\Serializer\JsonSerializationVisitor;
@@ -12,9 +10,10 @@ class UuidHandler
 {
     /**
      * @param JsonSerializationVisitor $visitor
-     * @param UuidInterface $uuid
-     * @param array $type
-     * @param Context $context
+     * @param UuidInterface            $uuid
+     * @param array                    $type
+     * @param Context                  $context
+     *
      * @return string
      */
     public function serializeUuidToJson(JsonSerializationVisitor $visitor, UuidInterface $uuid, array $type, Context $context)

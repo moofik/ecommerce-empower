@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Shop\Maker;
-
 
 use App\Entity\Shop;
 use App\Entity\User;
@@ -12,8 +10,10 @@ interface CreationStrategy
 {
     /**
      * @param User $user
-     * @return Shop
+     *
      * @throws ConflictHttpException
+     *
+     * @return Shop
      */
     public function create(User $user): Shop;
 }

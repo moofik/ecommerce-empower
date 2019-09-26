@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Shop\Maker;
-
 
 use App\Entity\Shop;
 use App\Entity\User;
@@ -18,6 +16,7 @@ class DefaultCreationStrategy implements CreationStrategy
 
     /**
      * DefaultCreationStrategy constructor.
+     *
      * @param ShopRepository $shopRepository
      */
     public function __construct(ShopRepository $shopRepository)
@@ -27,8 +26,10 @@ class DefaultCreationStrategy implements CreationStrategy
 
     /**
      * @param User $user
-     * @return Shop
+     *
      * @throws ConflictHttpException
+     *
+     * @return Shop
      */
     public function create(User $user): Shop
     {

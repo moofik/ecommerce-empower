@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Security\Voter;
-
 
 use App\Entity\Shop;
 use App\Entity\User;
@@ -20,6 +18,7 @@ class ShopVoter extends Voter
 
     /**
      * ShopVoter constructor.
+     *
      * @param Security $security
      */
     public function __construct(Security $security)
@@ -29,7 +28,8 @@ class ShopVoter extends Voter
 
     /**
      * @param string $attribute
-     * @param mixed $subject
+     * @param mixed  $subject
+     *
      * @return bool
      */
     protected function supports($attribute, $subject)
@@ -39,9 +39,10 @@ class ShopVoter extends Voter
     }
 
     /**
-     * @param string $attribute
-     * @param mixed $subject
+     * @param string         $attribute
+     * @param mixed          $subject
      * @param TokenInterface $token
+     *
      * @return bool
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)

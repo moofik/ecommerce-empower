@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Command;
-
 
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -40,11 +38,12 @@ class CreateUserCommand extends Command
 
     /**
      * CreateAdminUserCommand constructor.
-     * @param EntityManagerInterface $em
-     * @param UserRepository $repository
+     *
+     * @param EntityManagerInterface       $em
+     * @param UserRepository               $repository
      * @param UserPasswordEncoderInterface $encoder
-     * @param JWTTokenManagerInterface $tokenManager
-     * @param string|null $name
+     * @param JWTTokenManagerInterface     $tokenManager
+     * @param string|null                  $name
      */
     public function __construct(
         EntityManagerInterface $em,
@@ -64,11 +63,11 @@ class CreateUserCommand extends Command
     {
         $this
             ->setName('app:create:user')
-            ->setDescription("Create User");
+            ->setDescription('Create User');
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
     protected function execute(InputInterface $input, OutputInterface $output)

@@ -101,7 +101,7 @@ class ApiTestCase extends WebTestCase
      */
     protected function getEntityManager(): EntityManagerInterface
     {
-        /** @var EntityManagerInterface $em */
+        /* @var EntityManagerInterface $em */
         return self::$kernel
             ->getContainer()
             ->get('doctrine')
