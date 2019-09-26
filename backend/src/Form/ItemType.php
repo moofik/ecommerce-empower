@@ -27,9 +27,9 @@ class ItemType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class'      => Item::class,
-            'is_edit'         => false,
-            'csrf_protection' => false,
+            'data_class'         => Item::class,
+            'is_edit'            => false,
+            'csrf_protection'    => false,
             'allow_extra_fields' => true,
         ]);
     }

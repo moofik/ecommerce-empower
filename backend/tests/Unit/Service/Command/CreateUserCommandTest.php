@@ -1,15 +1,13 @@
 <?php
 
-
 namespace App\Tests\Unit\Service\Command;
-
 
 use App\Tests\Integration\ApiTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * We use ApiTestCase because of nice setUp implementation which purges our database before executing test
+ * We use ApiTestCase because of nice setUp implementation which purges our database before executing test.
  */
 class CreateUserCommandTest extends ApiTestCase
 {

@@ -52,11 +52,11 @@ class ShopItemController extends AbstractController
     /**
      * ItemController constructor.
      *
-     * @param ItemRepository $itemRepository
-     * @param ShopRepository $shopRepository
+     * @param ItemRepository         $itemRepository
+     * @param ShopRepository         $shopRepository
      * @param EntityManagerInterface $em
-     * @param SerializerInterface $serializer
-     * @param GroupsResolver $groupsResolver
+     * @param SerializerInterface    $serializer
+     * @param GroupsResolver         $groupsResolver
      */
     public function __construct(
         ItemRepository $itemRepository,
@@ -76,13 +76,14 @@ class ShopItemController extends AbstractController
      * @Route("/api/shops/{shop}/items", methods={"POST"}, name="api_create_item")
      * @IsGranted("SHOP_MANAGE", subject="shop")
      *
-     * @param Shop $shop
-     * @param Request $request
+     * @param Shop      $shop
+     * @param Request   $request
      * @param TagBinder $binder
      *
-     * @return Response
      * @throws ORMException
      * @throws \Doctrine\ORM\NonUniqueResultException
+     *
+     * @return Response
      */
     public function create(Shop $shop, Request $request, TagBinder $binder): Response
     {
@@ -104,7 +105,7 @@ class ShopItemController extends AbstractController
      * @Route("/api/shops/{shop}/items/{slug}", methods={"DELETE"}, name="api_delete_item")
      * @IsGranted("SHOP_MANAGE", subject="shop")
      *
-     * @param Shop $shop
+     * @param Shop   $shop
      * @param string $slug
      *
      * @return Response
@@ -130,7 +131,7 @@ class ShopItemController extends AbstractController
     /**
      * @Route("/api/shops/{shopId}/items", methods={"GET"}, name="api_get_items")
      *
-     * @param int $shopId
+     * @param int                        $shopId
      * @param Request                    $request
      * @param PaginatedCollectionFactory $factory
      *
@@ -182,10 +183,10 @@ class ShopItemController extends AbstractController
      * @Route("/api/shops/{shop}/items/{slug}", methods={"PUT","PATCH"}, name="api_edit_item")
      * @IsGranted("SHOP_MANAGE", subject="shop")
      *
-     * @param Request $request
+     * @param Request   $request
      * @param TagBinder $tagBinder
-     * @param Shop $shop
-     * @param string $slug
+     * @param Shop      $shop
+     * @param string    $slug
      *
      * @return Response
      */

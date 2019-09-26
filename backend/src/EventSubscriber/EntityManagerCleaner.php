@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\EventSubscriber;
-
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -17,6 +15,7 @@ class EntityManagerCleaner implements EventSubscriberInterface
 
     /**
      * EntityManagerHealthChecker constructor.
+     *
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager)
@@ -28,7 +27,7 @@ class EntityManagerCleaner implements EventSubscriberInterface
     {
         return [
             KernelEvents::TERMINATE => [
-                ['cleanEntityManager', 1000]
+                ['cleanEntityManager', 1000],
             ],
         ];
     }

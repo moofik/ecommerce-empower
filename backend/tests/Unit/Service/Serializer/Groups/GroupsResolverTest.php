@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Unit\Service\Serializer\Groups;
-
 
 use App\Serializer\Groups\GroupsResolver;
 use JMS\Serializer\Context;

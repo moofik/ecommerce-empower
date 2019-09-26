@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Unit\Service\Service\Maker;
-
 
 use App\Entity\Shop;
 use App\Entity\User;

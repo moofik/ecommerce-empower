@@ -9,7 +9,7 @@ use App\Tests\Integration\ApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class ItemControllerTest extends ApiTestCase
+class ShopItemControllerTest extends ApiTestCase
 {
     /**
      * @var array
@@ -58,25 +58,25 @@ class ItemControllerTest extends ApiTestCase
         $this->createTag('babylon');
 
         $this->createItem([
-            'name' => 'Rock Star Real Estate',
-            'description' => 'One of the best things you ever had',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rock Star Real Estate',
+            'description'        => 'One of the best things you ever had',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['cigarette'],
+            'tags'               => ['cigarette'],
         ], $shop->id, $this->userAuthHeaders);
 
         $this->createItem([
-            'name' => 'Smart Card',
-            'description' => 'Who knows what is the purpose of this strage thing...',
-            'priceType' => 'fixed',
-            'priceMin' => 400,
-            'priceMax' => null,
-            'isBargainPossible' => true,
+            'name'               => 'Smart Card',
+            'description'        => 'Who knows what is the purpose of this strage thing...',
+            'priceType'          => 'fixed',
+            'priceMin'           => 400,
+            'priceMax'           => null,
+            'isBargainPossible'  => true,
             'isExchangePossible' => true,
-            'tags' => ['babylon'],
+            'tags'               => ['babylon'],
         ], $shop->id, $this->userAuthHeaders);
 
         $response = $this->staticClient->request('GET', "/api/shops/{$shop->id}/items", ['count' => 1], [], $this->userAuthHeaders);
@@ -105,14 +105,14 @@ class ItemControllerTest extends ApiTestCase
         $shop = $this->getShop($this->userAuthHeaders);
 
         $properties = [
-            'name' => 'Rocket Milk Diesel Drink',
-            'description' => 'Luxury milk for beauty luxury super incredible super futuristic girls',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Milk Diesel Drink',
+            'description'        => 'Luxury milk for beauty luxury super incredible super futuristic girls',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'pink', 'luxury']
+            'tags'               => ['food', 'pink', 'luxury'],
         ];
 
         $response = $this->createItem($properties, $shop->id, $this->userAuthHeaders);
@@ -130,21 +130,21 @@ class ItemControllerTest extends ApiTestCase
         $shop = $this->getShop($this->userAuthHeaders);
 
         $properties = [
-            'name' => 'Rocket Milk Diesel Drink',
-            'description' => 'Luxury milk for beauty luxury super incredible super futuristic girls',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Milk Diesel Drink',
+            'description'        => 'Luxury milk for beauty luxury super incredible super futuristic girls',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'pink', 'luxury']
+            'tags'               => ['food', 'pink', 'luxury'],
         ];
 
         $response = $this->createItem($properties, $shop->id, $this->userAuthHeaders);
         $location = $response->headers->get('Location');
         $response = $this->staticClient->request(
             'GET',
-            $location . '?groups=shop,user',
+            $location.'?groups=shop,user',
             [],
             [],
             $this->userAuthHeaders
@@ -164,14 +164,14 @@ class ItemControllerTest extends ApiTestCase
     {
         $shop = $this->getShop($this->userAuthHeaders);
         $response = $this->createItem([
-            'name' => 'Rocket Sour Onion Drink',
-            'description' => 'Luxury onion for sour lowriders',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Sour Onion Drink',
+            'description'        => 'Luxury onion for sour lowriders',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'onion', 'sour']
+            'tags'               => ['food', 'onion', 'sour'],
         ], $shop->id, $this->userAuthHeaders);
 
         $response = $this->staticClient->request('DELETE', $response->headers->get('Location'), [], [], $this->userAuthHeaders);
@@ -183,14 +183,14 @@ class ItemControllerTest extends ApiTestCase
     {
         $shop = $this->getShop($this->userAuthHeaders);
         $response = $this->createItem([
-            'name' => 'Rocket Sour Onion Drink',
-            'description' => 'Luxury onion for sour lowriders',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Sour Onion Drink',
+            'description'        => 'Luxury onion for sour lowriders',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'onion', 'sour']
+            'tags'               => ['food', 'onion', 'sour'],
         ], $shop->id, $this->userAuthHeaders);
 
         $response = $this->staticClient->request('DELETE', $response->headers->get('Location'), [], [], $this->anotherUserAuthHeaders);
@@ -202,26 +202,26 @@ class ItemControllerTest extends ApiTestCase
     {
         $shop_1 = $this->getShop($this->userAuthHeaders);
         $response_1 = $this->createItem([
-            'name' => 'Rocket Sour Onion Drink',
-            'description' => 'Luxury onion for sour lowriders',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Sour Onion Drink',
+            'description'        => 'Luxury onion for sour lowriders',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'onion', 'sour']
+            'tags'               => ['food', 'onion', 'sour'],
         ], $shop_1->id, $this->userAuthHeaders);
 
         $shop_2 = $this->getShop($this->anotherUserAuthHeaders);
         $response_2 = $this->createItem([
-            'name' => 'Rocket Sour Onion Drink',
-            'description' => 'Luxury onion for sour lowriders',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Sour Onion Drink',
+            'description'        => 'Luxury onion for sour lowriders',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'onion', 'sour']
+            'tags'               => ['food', 'onion', 'sour'],
         ], $shop_2->id, $this->anotherUserAuthHeaders);
 
         $deleteResponse_1 = $this->staticClient->request('DELETE', $response_1->headers->get('Location'), [], [], $this->adminAuthHeaders);
@@ -244,14 +244,14 @@ class ItemControllerTest extends ApiTestCase
         $shop = $this->getShop($this->userAuthHeaders);
 
         $response = $this->createItem([
-            'name' => 'Rocket Sour Onion Drink',
-            'description' => 'Luxury onion for sour lowriders',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Sour Onion Drink',
+            'description'        => 'Luxury onion for sour lowriders',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'onion', 'sour']
+            'tags'               => ['food', 'onion', 'sour'],
         ], $shop->id, $this->userAuthHeaders);
 
         $response = $this->staticClient->jsonRequest(
@@ -259,7 +259,7 @@ class ItemControllerTest extends ApiTestCase
             $response->headers->get('Location'),
             [
                 'name' => 'Chupa Chups Drink',
-                'tags' => ['drink', 'sweet']
+                'tags' => ['drink', 'sweet'],
             ],
             $this->userAuthHeaders
         );
@@ -276,14 +276,14 @@ class ItemControllerTest extends ApiTestCase
         $shop = $this->getShop($this->userAuthHeaders);
 
         $response = $this->createItem([
-            'name' => 'Rocket Sour Onion Drink',
-            'description' => 'Luxury onion for sour lowriders',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Sour Onion Drink',
+            'description'        => 'Luxury onion for sour lowriders',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'onion', 'sour']
+            'tags'               => ['food', 'onion', 'sour'],
         ], $shop->id, $this->userAuthHeaders);
 
         $location = $response->headers->get('Location');
@@ -293,7 +293,7 @@ class ItemControllerTest extends ApiTestCase
             $location,
             [
                 'name' => 'Chupa Chups Drink',
-                'tags' => ['drink', 'sweet']
+                'tags' => ['drink', 'sweet'],
             ],
             $this->userAuthHeaders
         );
@@ -306,14 +306,14 @@ class ItemControllerTest extends ApiTestCase
             'PUT',
             $location,
             [
-                'name' => 'Rocket Sour Onion Drink',
-                'description' => 'Luxury onion for sour lowriders',
-                'priceType' => 'fixed',
-                'priceMin' => 1000,
-                'priceMax' => 2500,
-                'isBargainPossible' => false,
+                'name'               => 'Rocket Sour Onion Drink',
+                'description'        => 'Luxury onion for sour lowriders',
+                'priceType'          => 'fixed',
+                'priceMin'           => 1000,
+                'priceMax'           => 2500,
+                'isBargainPossible'  => false,
                 'isExchangePossible' => false,
-                'tags' => ['drink', 'sweet']
+                'tags'               => ['drink', 'sweet'],
             ],
             $this->userAuthHeaders
         );
@@ -329,14 +329,14 @@ class ItemControllerTest extends ApiTestCase
         $shop = $this->getShop($this->userAuthHeaders);
 
         $response = $this->createItem([
-            'name' => 'Rocket Sour Onion Drink',
-            'description' => 'Luxury onion for sour lowriders',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Sour Onion Drink',
+            'description'        => 'Luxury onion for sour lowriders',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'onion', 'sour']
+            'tags'               => ['food', 'onion', 'sour'],
         ], $shop->id, $this->userAuthHeaders);
 
         $response = $this->staticClient->jsonRequest(
@@ -344,7 +344,7 @@ class ItemControllerTest extends ApiTestCase
             $response->headers->get('Location'),
             [
                 'name' => 'Chupa Chups Drink',
-                'tags' => ['drink', 'sweet']
+                'tags' => ['drink', 'sweet'],
             ],
             $this->anotherUserAuthHeaders
         );
@@ -357,14 +357,14 @@ class ItemControllerTest extends ApiTestCase
         $shop = $this->getShop($this->userAuthHeaders);
 
         $response = $this->createItem([
-            'name' => 'Rocket Sour Onion Drink',
-            'description' => 'Luxury onion for sour lowriders',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Sour Onion Drink',
+            'description'        => 'Luxury onion for sour lowriders',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'onion', 'sour']
+            'tags'               => ['food', 'onion', 'sour'],
         ], $shop->id, $this->userAuthHeaders);
 
         $response = $this->staticClient->jsonRequest(
@@ -372,7 +372,7 @@ class ItemControllerTest extends ApiTestCase
             $response->headers->get('Location'),
             [
                 'name' => 'Chupa Chups Drink',
-                'tags' => ['drink', 'sweet']
+                'tags' => ['drink', 'sweet'],
             ],
             $this->adminAuthHeaders
         );
@@ -388,14 +388,14 @@ class ItemControllerTest extends ApiTestCase
     {
         $shop = $this->getShop($this->userAuthHeaders);
         $response = $this->createItem([
-            'name' => 'Rocket Sour Onion Drink',
-            'description' => 'Luxury onion for sour lowriders',
-            'priceType' => 'ranged',
-            'priceMin' => 1000,
-            'priceMax' => 2500,
-            'isBargainPossible' => false,
+            'name'               => 'Rocket Sour Onion Drink',
+            'description'        => 'Luxury onion for sour lowriders',
+            'priceType'          => 'ranged',
+            'priceMin'           => 1000,
+            'priceMax'           => 2500,
+            'isBargainPossible'  => false,
             'isExchangePossible' => false,
-            'tags' => ['food', 'onion', 'sour']
+            'tags'               => ['food', 'onion', 'sour'],
         ], $shop->id, $this->userAuthHeaders);
 
         $itemUrl = $response->headers->get('Location');
@@ -416,23 +416,24 @@ class ItemControllerTest extends ApiTestCase
 
     /**
      * @param array $properties
-     * @param int $shopId
+     * @param int   $shopId
      * @param array $authHeaders
      *
      * @return Response
      */
     private function createItem(array $properties, int $shopId, array $authHeaders): Response
     {
-        $uri = '/api/shops/' . $shopId . '/items';
+        $uri = '/api/shops/'.$shopId.'/items';
+
         return $this->staticClient->jsonRequest('POST', $uri, $properties, $authHeaders);
     }
 
     /**
      * @param string $name
      *
-     * @return Response
      * @throws TransportExceptionInterface
      *
+     * @return Response
      */
     private function createTag(string $name): Response
     {

@@ -22,12 +22,13 @@ class ItemRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param int $shopId
+     * @param int    $shopId
      * @param string $value
      *
-     * @return Item|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @throws \Doctrine\ORM\ORMException
+     *
+     * @return Item|null
      */
     public function findOneByShopIdAndSlug($shopId, string $value): ?Item
     {
@@ -44,6 +45,7 @@ class ItemRepository extends ServiceEntityRepository
 
     /**
      * @param Shop $shop
+     *
      * @return QueryBuilder
      */
     public function getFindAllByShopQueryBuilder(Shop $shop): QueryBuilder
@@ -55,6 +57,7 @@ class ItemRepository extends ServiceEntityRepository
 
     /**
      * @param Shop $shop
+     *
      * @return QueryBuilder
      */
     public function getCountByShopQueryBuilder(Shop $shop): QueryBuilder

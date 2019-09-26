@@ -32,8 +32,8 @@ class RegistrationController extends AbstractController
      * RegistrationController constructor.
      *
      * @param EntityManagerInterface $entityManager
-     * @param SerializerInterface $serializer
-     * @param GroupsResolver $groupsResolver
+     * @param SerializerInterface    $serializer
+     * @param GroupsResolver         $groupsResolver
      */
     public function __construct(
         EntityManagerInterface $entityManager,

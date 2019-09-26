@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Service\Filter;
 
 use Doctrine\ORM\QueryBuilder;
@@ -16,11 +15,9 @@ class AbstractFilter implements FilterInterface
 {
     public function apply(QueryBuilder $queryBuilder)
     {
-
     }
 
     protected function extractProperties()
     {
-
     }
 }

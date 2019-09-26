@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Shop\Maker;
-
 
 use App\Entity\Shop;
 use App\Entity\User;
@@ -16,6 +14,7 @@ class ShopMaker
 
     /**
      * ShopMaker constructor.
+     *
      * @param CreationStrategy $creationStrategy
      */
     public function __construct(CreationStrategy $creationStrategy)
@@ -25,6 +24,7 @@ class ShopMaker
 
     /**
      * @param User $user
+     *
      * @return Shop
      */
     public function create(User $user): Shop

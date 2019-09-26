@@ -23,6 +23,7 @@ trait FormHandlerTrait
 
         if ($data === null) {
             $apiProblem = new ApiProblem(400, ApiProblem::TYPE_INVALID_REQUEST_BODY_FORMAT);
+
             throw new ApiProblemException($apiProblem);
         }
 
@@ -33,6 +34,7 @@ trait FormHandlerTrait
         } catch (\Exception $exception) {
             $apiProblem = new ApiProblem(400, ApiProblem::TYPE_VALIDATION_ERROR);
             $apiProblem->set('detail', $exception->getMessage());
+
             throw new ApiProblemException($apiProblem);
         }
     }

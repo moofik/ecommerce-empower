@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Serializer\Groups;
-
 
 use JMS\Serializer\Context;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +25,7 @@ class GroupsResolver
 
     /**
      * GroupsResolver constructor.
+     *
      * @param RequestStack $requestStack
      */
     public function __construct(RequestStack $requestStack)
@@ -66,6 +65,7 @@ class GroupsResolver
 
     /**
      * @param string $group
+     *
      * @return GroupsResolver
      */
     public function addGroup(string $group): self
@@ -76,7 +76,8 @@ class GroupsResolver
     }
 
     /**
-     * Reset default required groups
+     * Reset default required groups.
+     *
      * @return GroupsResolver
      */
     public function resetDefaults(): self

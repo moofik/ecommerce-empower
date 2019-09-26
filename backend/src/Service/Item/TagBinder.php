@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Item;
-
 
 use App\Entity\Item;
 use App\Repository\TagRepository;
@@ -22,7 +20,8 @@ class TagBinder
 
     /**
      * TagBinder constructor.
-     * @param TagRepository $repository
+     *
+     * @param TagRepository          $repository
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(TagRepository $repository, EntityManagerInterface $entityManager)
@@ -32,8 +31,9 @@ class TagBinder
     }
 
     /**
-     * @param Item $item
+     * @param Item   $item
      * @param string $tagName
+     *
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function bindTag(Item $item, string $tagName)
@@ -44,8 +44,9 @@ class TagBinder
     }
 
     /**
-     * @param Item $item
+     * @param Item  $item
      * @param array $tagNames
+     *
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function bindTags(Item $item, array $tagNames)

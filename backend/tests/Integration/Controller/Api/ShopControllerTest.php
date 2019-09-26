@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Tests\Integration\Controller\Api;
-
 
 use App\Tests\Integration\ApiTestCase;
 

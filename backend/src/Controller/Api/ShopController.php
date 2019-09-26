@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Controller\Api;
-
 
 use App\Entity\Shop;
 use App\Entity\User;
@@ -46,18 +44,18 @@ class ShopController extends AbstractController
 
     /**
      * ShopController constructor.
-     * @param GroupsResolver $groupsResolver
-     * @param SerializerInterface $serializer
+     *
+     * @param GroupsResolver         $groupsResolver
+     * @param SerializerInterface    $serializer
      * @param EntityManagerInterface $em
-     * @param ShopRepository $shopRepository
+     * @param ShopRepository         $shopRepository
      */
     public function __construct(
         GroupsResolver $groupsResolver,
         SerializerInterface $serializer,
         EntityManagerInterface $em,
         ShopRepository $shopRepository
-    )
-    {
+    ) {
         $this->groupsResolver = $groupsResolver;
         $this->serializer = $serializer;
         $this->em = $em;
@@ -101,8 +99,9 @@ class ShopController extends AbstractController
      * @Route("/api/shops/{shop}", methods={"DELETE"}, name="api_delete_shop")
      * @IsGranted("SHOP_MANAGE", subject="shop")
      *
-     * @param Shop $shop
+     * @param Shop                          $shop
      * @param AuthorizationCheckerInterface $authorizationChecker
+     *
      * @return Response
      */
     public function deleteShop(Shop $shop, AuthorizationCheckerInterface $authorizationChecker): Response
