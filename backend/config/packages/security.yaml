@@ -1,7 +1,7 @@
 security:
     encoders:
         App\Entity\User:
-            algorithm: argon2i
+            algorithm: auto
 
     providers:
         entity_provider:
@@ -23,13 +23,8 @@ security:
             success_handler:          lexik_jwt_authentication.handler.authentication_success
             failure_handler:          lexik_jwt_authentication.handler.authentication_failure
 
-        register:
-          pattern:  ^/api/register
-          stateless: true
-          anonymous: true
-
         api:
-          pattern:   ^/api
+          request_matcher: app.request_matcher.requested
           stateless: true
           guard:
             authenticators:

@@ -147,7 +147,7 @@ class ApiTestCaseDebugger
     /**
      * @return Response
      */
-    public function getLastResponse(): Response
+    public function getLastResponse(): ?Response
     {
         return self::$client->getResponse();
     }

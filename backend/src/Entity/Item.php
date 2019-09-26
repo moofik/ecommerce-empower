@@ -7,11 +7,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use JMS\Serializer\Annotation as Serializer;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ItemRepository")
+ * @Serializer\ExclusionPolicy("all")
  */
 class Item
 {
@@ -26,54 +28,62 @@ class Item
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Serializer\Expose()
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=500)
+     * @Serializer\Expose()
      */
     private $description;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
+     * @Serializer\Expose()
+     * @Serializer\SerializedName("priceType")
      */
     private $priceType;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Serializer\Expose()
+     * @Serializer\SerializedName("priceMin")
      */
     private $priceMin;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Serializer\Expose()
+     * @Serializer\SerializedName("priceMax")
      */
     private $priceMax;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
+     * @Serializer\Expose()
+     * @Serializer\SerializedName("isBargainPossible")
      */
     private $isBargainPossible;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
+     * @Serializer\Expose()
+     * @Serializer\SerializedName("isExchangePossible")
      */
     private $isExchangePossible;
 
     /**
      * @ORM\Column(type="uuid")
+     * @Serializer\Expose()
      */
     private $uuid;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Serializer\Expose()
      */
     private $quantity;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="items")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
 
     /**
      * @var string
@@ -85,8 +95,17 @@ class Item
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Tag", mappedBy="items")
+     * @Serializer\Expose()
      */
     private $tags;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Shop", inversedBy="items")
+     * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Expose()
+     * @Serializer\Groups({"shop"})
+     */
+    private $shop;
 
     public function __construct()
     {
@@ -123,12 +142,12 @@ class Item
         return $this;
     }
 
-    public function getPriceType(): ?int
+    public function getPriceType(): ?string
     {
         return $this->priceType;
     }
 
-    public function setPriceType(?int $priceType): self
+    public function setPriceType(?string $priceType): self
     {
         $this->priceType = $priceType;
 
@@ -207,18 +226,6 @@ class Item
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Tag[]
      */
@@ -261,5 +268,17 @@ class Item
     public function setSlug(string $slug): void
     {
         $this->slug = $slug;
+    }
+
+    public function getShop(): Shop
+    {
+        return $this->shop;
+    }
+
+    public function setShop(Shop $shop): self
+    {
+        $this->shop = $shop;
+
+        return $this;
     }
 }

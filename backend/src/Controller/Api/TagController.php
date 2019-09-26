@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Tag;
 use App\Form\TagType;
 use App\Repository\TagRepository;
+use App\Serializer\Groups\GroupsResolver;
 use App\Service\Api\DefaultApiActionsTrait;
 use App\Service\Api\Problem\ApiProblem;
 use App\Service\Api\Problem\ApiProblemException;
@@ -35,6 +36,10 @@ class TagController extends AbstractController
      * @var EntityManagerInterface
      */
     private $em;
+    /**
+     * @var GroupsResolver
+     */
+    private $groupsResolver;
 
     /**
      * TagController constructor.
@@ -42,16 +47,22 @@ class TagController extends AbstractController
      * @param TagRepository          $tagRepository
      * @param EntityManagerInterface $em
      * @param SerializerInterface    $serializer
+     * @param GroupsResolver         $groupsResolver
      */
-    public function __construct(TagRepository $tagRepository, EntityManagerInterface $em, SerializerInterface $serializer)
-    {
+    public function __construct(
+        TagRepository $tagRepository,
+        EntityManagerInterface $em,
+        SerializerInterface $serializer,
+        GroupsResolver $groupsResolver
+    ) {
         $this->tagRepository = $tagRepository;
         $this->em = $em;
         $this->serializer = $serializer;
+        $this->groupsResolver = $groupsResolver;
     }
 
     /**
-     * @Route("/api/tag", methods={"POST"}, name="api_create_tag")
+     * @Route("/api/tags", methods={"POST"}, name="api_create_tag")
      * @IsGranted({"ROLE_ADMIN"})
      *
      * @param Request $request
@@ -70,7 +81,7 @@ class TagController extends AbstractController
     }
 
     /**
-     * @Route("/api/tag/{slug}", methods={"DELETE"}, name="api_delete_tag")
+     * @Route("/api/tags/{slug}", methods={"DELETE"}, name="api_delete_tag")
      * @IsGranted({"ROLE_ADMIN"})
      *
      * @param string $slug
@@ -87,10 +98,6 @@ class TagController extends AbstractController
             $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
 
             throw new ApiProblemException($problem);
-        }
-
-        if ($tag === null) {
-            throw new NotFoundHttpException(sprintf('Tag with slug %s was not found', $slug));
         }
 
         return $this->createApiResponse(null, 204);
@@ -115,7 +122,7 @@ class TagController extends AbstractController
     }
 
     /**
-     * @Route("/api/tag/{slug}", methods={"GET"}, name="api_get_tag")
+     * @Route("/api/tags/{slug}", methods={"GET"}, name="api_get_tag")
      *
      * @param string $slug
      *
@@ -126,9 +133,7 @@ class TagController extends AbstractController
         try {
             $tag = $this->tagRepository->findOneBySlug($slug);
         } catch (ORMException $e) {
-            $problem = new ApiProblem(500, ApiProblem::TYPE_SERVER_DATABASE_ERROR);
-
-            throw new ApiProblemException($problem);
+            $this->throwDatabaseApiException($e->getMessage());
         }
 
         if ($tag === null) {
@@ -144,5 +149,13 @@ class TagController extends AbstractController
     public function getSerializer(): SerializerInterface
     {
         return $this->serializer;
+    }
+
+    /**
+     * @return GroupsResolver
+     */
+    public function getGroupsResolver(): GroupsResolver
+    {
+        return $this->groupsResolver;
     }
 }

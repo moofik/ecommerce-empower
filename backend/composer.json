@@ -17,7 +17,6 @@
         "monolog/monolog": "^1.24",
         "moontoast/math": "^1.1",
         "nelmio/cors-bundle": "^1.5",
-        "php-amqplib/rabbitmq-bundle": "^1.14",
         "ramsey/uuid-doctrine": "^1.5",
         "sensio/framework-extra-bundle": "^5.1",
         "stof/doctrine-extensions-bundle": "^1.3",

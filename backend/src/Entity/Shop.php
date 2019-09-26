@@ -5,41 +5,44 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\TagRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\ShopRepository")
  * @Serializer\ExclusionPolicy("all")
  */
-class Tag
+class Shop
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Serializer\Expose()
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
      * @Serializer\Expose()
      */
     private $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=100)
-     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(type="text")
      * @Serializer\Expose()
      */
-    private $slug;
+    private $description;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Item", inversedBy="tags", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="shops")
+     * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Expose()
+     * @Serializer\Groups({"user"})
+     */
+    private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Item", mappedBy="shop", orphanRemoval=true)
      */
     private $items;
 
@@ -65,20 +68,28 @@ class Tag
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getSlug(): string
+    public function getDescription(): ?string
     {
-        return $this->slug;
+        return $this->description;
     }
 
-    /**
-     * @param string $slug
-     */
-    public function setSlug(string $slug): void
+    public function setDescription(string $description): self
     {
-        $this->slug = $slug;
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
     /**
@@ -93,6 +104,7 @@ class Tag
     {
         if (!$this->items->contains($item)) {
             $this->items[] = $item;
+            $item->setShop($this);
         }
 
         return $this;
@@ -102,6 +114,10 @@ class Tag
     {
         if ($this->items->contains($item)) {
             $this->items->removeElement($item);
+            // set the owning side to null (unless already changed)
+            if ($item->getShop() === $this) {
+                $item->setShop(null);
+            }
         }
 
         return $this;
