@@ -4,6 +4,7 @@
 
 namespace App\Tests\Integration\Controller\Api;
 
+use App\Service\Api\Problem\ApiProblem;
 use App\Tests\Integration\ApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -40,6 +41,14 @@ class ItemControllerTest extends ApiTestCase
         if (!$this->adminAuthHeaders) {
             $this->adminAuthHeaders = $this->getValidAuthenticationHeaders('admin', 'admin', ['ROLE_ADMIN']);
         }
+
+        $this->createTag('food');
+        $this->createTag('onion');
+        $this->createTag('sour');
+        $this->createTag('drink');
+        $this->createTag('sweet');
+        $this->createTag('pink');
+        $this->createTag('luxury');
     }
 
     public function testGetAllItems()
@@ -93,10 +102,6 @@ class ItemControllerTest extends ApiTestCase
 
     public function testCreateItemWithTags()
     {
-        $this->createTag('food');
-        $this->createTag('pink');
-        $this->createTag('luxury');
-
         $shop = $this->getShop($this->userAuthHeaders);
 
         $properties = [
@@ -122,10 +127,6 @@ class ItemControllerTest extends ApiTestCase
 
     public function testItemWithEmbeddedFields()
     {
-        $this->createTag('food');
-        $this->createTag('pink');
-        $this->createTag('luxury');
-
         $shop = $this->getShop($this->userAuthHeaders);
 
         $properties = [
@@ -161,10 +162,6 @@ class ItemControllerTest extends ApiTestCase
 
     public function testShopOwnerCanDeleteItem()
     {
-        $this->createTag('food');
-        $this->createTag('onion');
-        $this->createTag('sour');
-
         $shop = $this->getShop($this->userAuthHeaders);
         $response = $this->createItem([
             'name' => 'Rocket Sour Onion Drink',
@@ -184,10 +181,6 @@ class ItemControllerTest extends ApiTestCase
 
     public function testNonShopOwnerCantDeleteItem()
     {
-        $this->createTag('food');
-        $this->createTag('onion');
-        $this->createTag('sour');
-
         $shop = $this->getShop($this->userAuthHeaders);
         $response = $this->createItem([
             'name' => 'Rocket Sour Onion Drink',
@@ -207,10 +200,6 @@ class ItemControllerTest extends ApiTestCase
 
     public function testAdminCanDeleteEveryItem()
     {
-        $this->createTag('food');
-        $this->createTag('onion');
-        $this->createTag('sour');
-
         $shop_1 = $this->getShop($this->userAuthHeaders);
         $response_1 = $this->createItem([
             'name' => 'Rocket Sour Onion Drink',
@@ -253,11 +242,6 @@ class ItemControllerTest extends ApiTestCase
     public function testShopOwnerCanEditItem()
     {
         $shop = $this->getShop($this->userAuthHeaders);
-        $this->createTag('food');
-        $this->createTag('onion');
-        $this->createTag('sour');
-        $this->createTag('drink');
-        $this->createTag('sweet');
 
         $response = $this->createItem([
             'name' => 'Rocket Sour Onion Drink',
@@ -287,22 +271,122 @@ class ItemControllerTest extends ApiTestCase
         $this->asserter()->assertResponsePropertyEquals($response, 'name', 'Chupa Chups Drink');
     }
 
+    public function testPutItemEdit()
+    {
+        $shop = $this->getShop($this->userAuthHeaders);
+
+        $response = $this->createItem([
+            'name' => 'Rocket Sour Onion Drink',
+            'description' => 'Luxury onion for sour lowriders',
+            'priceType' => 'ranged',
+            'priceMin' => 1000,
+            'priceMax' => 2500,
+            'isBargainPossible' => false,
+            'isExchangePossible' => false,
+            'tags' => ['food', 'onion', 'sour']
+        ], $shop->id, $this->userAuthHeaders);
+
+        $location = $response->headers->get('Location');
+
+        $response = $this->staticClient->jsonRequest(
+            'PUT',
+            $location,
+            [
+                'name' => 'Chupa Chups Drink',
+                'tags' => ['drink', 'sweet']
+            ],
+            $this->userAuthHeaders
+        );
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertyEquals($response, 'type', ApiProblem::TYPE_VALIDATION_ERROR);
+        $this->asserter()->assertResponsePropertyExists($response, 'detail');
+
+        $response = $this->staticClient->jsonRequest(
+            'PUT',
+            $location,
+            [
+                'name' => 'Rocket Sour Onion Drink',
+                'description' => 'Luxury onion for sour lowriders',
+                'priceType' => 'fixed',
+                'priceMin' => 1000,
+                'priceMax' => 2500,
+                'isBargainPossible' => false,
+                'isExchangePossible' => false,
+                'tags' => ['drink', 'sweet']
+            ],
+            $this->userAuthHeaders
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertyEquals($response, 'priceType', 'fixed');
+        $this->asserter()->assertResponsePropertyExists($response, 'tags[0].name', 'drink');
+        $this->asserter()->assertResponsePropertyExists($response, 'tags[0].name', 'sweet');
+    }
+
     public function testNonShopOwnerCantEditItem()
     {
+        $shop = $this->getShop($this->userAuthHeaders);
 
+        $response = $this->createItem([
+            'name' => 'Rocket Sour Onion Drink',
+            'description' => 'Luxury onion for sour lowriders',
+            'priceType' => 'ranged',
+            'priceMin' => 1000,
+            'priceMax' => 2500,
+            'isBargainPossible' => false,
+            'isExchangePossible' => false,
+            'tags' => ['food', 'onion', 'sour']
+        ], $shop->id, $this->userAuthHeaders);
+
+        $response = $this->staticClient->jsonRequest(
+            'PATCH',
+            $response->headers->get('Location'),
+            [
+                'name' => 'Chupa Chups Drink',
+                'tags' => ['drink', 'sweet']
+            ],
+            $this->anotherUserAuthHeaders
+        );
+
+        $this->assertEquals(403, $response->getStatusCode());
     }
 
     public function testAdminCanEditEveryItem()
     {
+        $shop = $this->getShop($this->userAuthHeaders);
 
+        $response = $this->createItem([
+            'name' => 'Rocket Sour Onion Drink',
+            'description' => 'Luxury onion for sour lowriders',
+            'priceType' => 'ranged',
+            'priceMin' => 1000,
+            'priceMax' => 2500,
+            'isBargainPossible' => false,
+            'isExchangePossible' => false,
+            'tags' => ['food', 'onion', 'sour']
+        ], $shop->id, $this->userAuthHeaders);
+
+        $response = $this->staticClient->jsonRequest(
+            'PATCH',
+            $response->headers->get('Location'),
+            [
+                'name' => 'Chupa Chups Drink',
+                'tags' => ['drink', 'sweet']
+            ],
+            $this->adminAuthHeaders
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->asserter()->assertResponsePropertyEquals($response, 'tags[0].name', 'drink');
+        $this->asserter()->assertResponsePropertyEquals($response, 'tags[1].name', 'sweet');
+        $this->asserter()->assertResponsePropertyCount($response, 'tags', 2);
+        $this->asserter()->assertResponsePropertyEquals($response, 'name', 'Chupa Chups Drink');
     }
 
     public function testGetItem()
     {
         $shop = $this->getShop($this->userAuthHeaders);
-        $this->createTag('food');
-        $this->createTag('onion');
-        $this->createTag('sour');
         $response = $this->createItem([
             'name' => 'Rocket Sour Onion Drink',
             'description' => 'Luxury onion for sour lowriders',
